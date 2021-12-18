@@ -1,0 +1,29 @@
+{
+    "name": "techies-africa/laravel_trakker",
+    "description": "Official Laravel client for Trakker",
+    "autoload": {
+        "psr-4": {
+            "TechiesAfrica\\LaravelTrakker\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Confidence Ugolo",
+            "email": "ugoloconfidence@gmail.com"
+        }
+    ],
+    "require": {},
+    "minimum-stability": "dev",
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "TechiesAfrica\\LaravelTrakker\\Providers\\TrakkerServiceProvider"
+            ]
+        }
+    }
+}
