@@ -55,7 +55,7 @@ class TrakkerService extends BaseTrakkerService
     public function build()
     {
         return [
-            "app_key" => env("TRAKKER_KEY"),
+            "app_key" => env("TRAKKER_APP_KEY"),
             "request_time" => $this->request_time,
             "response_time" => $this->response_time,
             "payload" => [

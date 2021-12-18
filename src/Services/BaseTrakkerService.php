@@ -101,7 +101,7 @@ class BaseTrakkerService
 
     protected function canPush()
     {
-        if (empty(env("TRAKKER_APP_KEY")) || empty(env("TRAKKER_URL"))) {
+        if (empty(env("TRAKKER_APP_KEY")) || empty(env("TRAKKER_BASE_URL"))) {
             return false;
         }
         if (!$this->should_log || !$this->can_log) {
