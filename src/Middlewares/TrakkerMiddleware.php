@@ -18,19 +18,21 @@ class TrakkerMiddleware
     public function handle(Request $request, Closure $next)
     {
         $tracker = TrakkerService::tracker();
-        $tracker->setIgnoreRoutes([
-            "web.read_file"
-        ]);
-        $tracker->setAuthenticatedMiddlewares(["auth" , "admin" , "verified"]);
-        $tracker->setIgnoreMiddlewares(["Barryvdh\Debugbar\Middleware\DebugbarEnabled"]);
-        $tracker->setUserFields(["id" => "id", "name" => "full_name", "email" => "email"]);
+        // $tracker->setIgnoreRoutes([
+        //     "web.read_file"
+        // ]);
+        // $tracker->setAuthenticatedMiddlewares(["auth" , "admin" , "verified"]);
+        // $tracker->setIgnoreMiddlewares(["Barryvdh\Debugbar\Middleware\DebugbarEnabled"]);
+        // $tracker->setUserFields(["id" => "id", "name" => "full_name", "email" => "email"]);
+        // $tracker->setShouldLog(false);
         $tracker->preRequest($request);
+
         $response =  $next($request);
 
-        TrakkerService::log("pushing data");
+        // TrakkerService::log("pushing data");
         $tracker->postRequest($request)
             ->push();
-        // }
+
         return $response;
     }
 }

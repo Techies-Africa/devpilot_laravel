@@ -20,8 +20,8 @@ class BaseTrakkerService
     protected $user;
     protected $user_fields = ["id" => "id", "name" => "name", "email" => "email"];
     protected $ignore_routes = [];
-    protected $ignore_middlewares = [];
-    protected $authenticated_middlewares = [];
+    protected $ignore_middlewares = ["Barryvdh\Debugbar\Middleware\DebugbarEnabled"];
+    protected $authenticated_middlewares = ["auth" , "admin" , "verified"];
 
 
     public function __construct()
@@ -101,7 +101,7 @@ class BaseTrakkerService
 
     protected function canPush()
     {
-        if (empty(env("TRAKKER_KEY")) || empty(env("TRAKKER_URL"))) {
+        if (empty(env("TRAKKER_APP_KEY")) || empty(env("TRAKKER_URL"))) {
             return false;
         }
         if (!$this->should_log || !$this->can_log) {
