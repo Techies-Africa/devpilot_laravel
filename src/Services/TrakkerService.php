@@ -79,7 +79,7 @@ class TrakkerService extends BaseTrakkerService
             return null;
         }
 
-        $url = env("TRAKKER_URL")."/api/visits/log";
+        $url = env("TRAKKER_BASE_URL")."/api/visits/log";
         $data = $this->build();
 
         $curl = curl_init();
@@ -101,7 +101,6 @@ class TrakkerService extends BaseTrakkerService
 
         $process = curl_exec($curl);
         curl_close($curl);
-        TrakkerService::log("pushed data" , [$process , $data]);
 
         return $process;
     }
