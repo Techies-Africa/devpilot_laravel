@@ -1,10 +1,12 @@
 <?php
 
-namespace TechiesAfrica\LaravelTrakker\Services;
+namespace TechiesAfrica\Devpilot\Services\ActivityTracker;
 
 use Illuminate\Http\Request;
+use TechiesAfrica\Devpilot\Constants\UrlConstants;
+use TechiesAfrica\Devpilot\Services\General\Guzzle\GuzzleService;
 
-class TrakkerService extends BaseTrakkerService
+class TrackerService extends BaseTrackerService
 {
 
     public static function tracker(): self
@@ -55,7 +57,7 @@ class TrakkerService extends BaseTrakkerService
     public function build()
     {
         return [
-            "app_key" => env("TRAKKER_APP_KEY"),
+            "app_key" => config("devpilot.app_key"),
             "request_time" => $this->request_time,
             "response_time" => $this->response_time,
             "payload" => [
@@ -74,34 +76,14 @@ class TrakkerService extends BaseTrakkerService
 
     public function push()
     {
-
         if (!$this->canPush()) {
             return null;
         }
 
-        $url = env("TRAKKER_BASE_URL")."/api/visits/log";
+        $url = UrlConstants::get(UrlConstants::LOG_ACTIVITY);
         $data = $this->build();
 
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => $url,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_HTTPHEADER => array(
-                'Accept: application/json',
-                'Content-Type: application/json'
-            ),
-            CURLOPT_POSTFIELDS => json_encode($data),
-        ));
-
-        $process = curl_exec($curl);
-        curl_close($curl);
-
-        return $process;
+        $guzzle = new GuzzleService($url);
+        return $guzzle->post($data);
     }
 }

@@ -18,7 +18,7 @@ Next, add the service provider to your app/config.php file under the list of pro
 'providers' => [
     ...,
     App\Providers\RouteServiceProvider::class,
-    TechiesAfrica\LaravelTrakker\Providers\TrakkerServiceProvider::class,
+    TechiesAfrica\Devpilot\Providers\TrakkerServiceProvider::class,
     ...
 ],
 ```
@@ -29,7 +29,7 @@ Finally, add the middleware to your app\Http\Kernel.php file under the $middlewa
 protected $middleware = [
      ...,
      \Illuminate\Session\Middleware\StartSession::class,
-     TechiesAfrica\LaravelTrakker\Middlewares\TrakkerMiddleware::class,
+     TechiesAfrica\Devpilot\Middlewares\TrakkerMiddleware::class,
      ...
 ];
 ```
@@ -65,9 +65,9 @@ This is what the TrakkerMiddleware looks like. If you would like to implement it
 ```php
 <?php
 
-namespace TechiesAfrica\LaravelTrakker\Middlewares;
+namespace TechiesAfrica\Devpilot\Middlewares;
 
-use TechiesAfrica\LaravelTrakker\Services\TrakkerService;
+use TechiesAfrica\Devpilot\Services\TrakkerService;
 use Closure;
 use Illuminate\Http\Request;
 

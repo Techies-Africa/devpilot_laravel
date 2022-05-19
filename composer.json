@@ -1,9 +1,9 @@
 {
-    "name": "techies-africa/laravel_trakker",
-    "description": "Official Laravel client for Trakker",
+    "name": "techies-africa/devpilot",
+    "description": "Official laravel client for Devpilot",
     "autoload": {
         "psr-4": {
-            "TechiesAfrica\\LaravelTrakker\\": "src/"
+            "TechiesAfrica\\Devpilot\\": "src/"
         }
     },
     "authors": [
@@ -22,7 +22,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "TechiesAfrica\\LaravelTrakker\\Providers\\TrakkerServiceProvider"
+                "TechiesAfrica\\Devpilot\\Providers\\DevpilotServiceProvider"
             ]
         }
     }

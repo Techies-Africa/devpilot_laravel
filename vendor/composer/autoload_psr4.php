@@ -6,5 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'TechiesAfrica\\LaravelTrakker\\' => array($baseDir . '/src'),
+    'Tests\\' => array($baseDir . '/tests'),
+    'TechiesAfrica\\Devpilot\\' => array($baseDir . '/src'),
 );

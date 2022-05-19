@@ -1,12 +1,12 @@
 <?php
 
-namespace TechiesAfrica\LaravelTrakker\Middlewares;
+namespace TechiesAfrica\Devpilot\Middlewares\ActivityTracker;
 
-use TechiesAfrica\LaravelTrakker\Services\TrakkerService;
+use TechiesAfrica\Devpilot\Services\TrakkerService;
 use Closure;
 use Illuminate\Http\Request;
 
-class TrakkerMiddleware
+class TrackerMiddleware
 {
     /**
      * Handle an incoming request.

@@ -1,11 +1,11 @@
 <?php
 
-namespace TechiesAfrica\LaravelTrakker\Services;
+namespace TechiesAfrica\Devpilot\Services\ActivityTracker;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-class BaseTrakkerService
+class BaseTrackerService
 {
     protected Request $request;
     protected bool $can_log = true;
@@ -21,7 +21,7 @@ class BaseTrakkerService
     protected $user_fields = ["id" => "id", "name" => "name", "email" => "email"];
     protected $ignore_routes = [];
     protected $ignore_middlewares = ["Barryvdh\Debugbar\Middleware\DebugbarEnabled"];
-    protected $authenticated_middlewares = ["auth" , "admin" , "verified"];
+    protected $authenticated_middlewares = ["auth", "admin", "verified"];
 
 
     public function __construct()
@@ -101,7 +101,7 @@ class BaseTrakkerService
 
     protected function canPush()
     {
-        if (empty(env("TRAKKER_APP_KEY")) || empty(env("TRAKKER_BASE_URL"))) {
+        if (empty(config("devpilot.app_key")) || empty(config("devpilot.base_url"))) {
             return false;
         }
         if (!$this->should_log || !$this->can_log) {
@@ -113,8 +113,10 @@ class BaseTrakkerService
         return true;
     }
 
-    public static function log($message , $data = [])
+    public static function log($message, $data = [])
     {
-        Log::channel(env("TRAKKER_LOG_CHANNEL" ,  env('LOG_CHANNEL', 'stack')))->info($message , $data);
+        if (config("devpilot.enable_activity_tracker_logging")) {
+            Log::channel(config("devpilot.app_key"))->info($message, $data);
+        }
     }
 }

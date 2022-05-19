@@ -9,12 +9,17 @@ class ComposerStaticInit474d5dcdda5c072d287679653e11b893
     public static $prefixLengthsPsr4 = array (
         'T' => 
         array (
-            'TechiesAfrica\\LaravelTrakker\\' => 29,
+            'Tests\\' => 6,
+            'TechiesAfrica\\Devpilot\\' => 23,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'TechiesAfrica\\LaravelTrakker\\' => 
+        'Tests\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/tests',
+        ),
+        'TechiesAfrica\\Devpilot\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
         ),

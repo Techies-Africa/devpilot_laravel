@@ -1,11 +1,11 @@
 <?php
 
-namespace TechiesAfrica\LaravelTrakker\Providers;
+namespace TechiesAfrica\Devpilot\Providers\ActivityTracker;
 
 use Illuminate\Support\ServiceProvider;
-use TechiesAfrica\LaravelTrakker\Services\TrakkerService;
+use TechiesAfrica\Devpilot\Services\ActivityTracker\TrackerService;
 
-class TrakkerServiceProvider extends ServiceProvider
+class TrackerServiceProvider extends ServiceProvider
 {
     /**
      * Register services.
@@ -14,8 +14,8 @@ class TrakkerServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(TrakkerService::class, function ($app) {
-            return new TrakkerService();
+        $this->app->singleton(TrackerService::class, function ($app) {
+            return new TrackerService();
         });
     }
 
