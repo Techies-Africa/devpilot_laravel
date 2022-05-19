@@ -4,6 +4,7 @@ namespace TechiesAfrica\Devpilot\Services\General\Guzzle;
 
 use Exception;
 use GuzzleHttp\Client;
+use TechiesAfrica\Devpilot\Exceptions\General\GuzzleException;
 use Throwable;
 
 class GuzzleService
@@ -96,5 +97,12 @@ class GuzzleService
             "message" => $message,
             "data" => $data
         ];
+    }
+
+    public function validateResponse(array $process)
+    {
+        if($process["status"] == 0){
+            throw new GuzzleException("Unable to connect to remote server. Kindly check your internet connection and retry.");
+        }
     }
 }

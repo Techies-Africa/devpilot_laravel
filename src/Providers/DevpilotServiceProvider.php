@@ -3,7 +3,9 @@
 namespace TechiesAfrica\Devpilot\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use TechiesAfrica\Devpilot\Console\Commands\Deployments\DeploymentsCommand;
+use TechiesAfrica\Devpilot\Console\Commands\Deployments\DeployCommand;
+use TechiesAfrica\Devpilot\Console\Commands\Deployments\FullDeployCommand;
+use TechiesAfrica\Devpilot\Console\Commands\General\InstallCommand;
 use TechiesAfrica\Devpilot\Services\ActivityTracker\TrackerService;
 
 class DevpilotServiceProvider extends ServiceProvider
@@ -33,7 +35,9 @@ class DevpilotServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                DeploymentsCommand::class,
+                InstallCommand::class,
+                DeployCommand::class,
+                FullDeployCommand::class,
             ]);
             $this->mergeConfigFrom(__DIR__.'/../config/devpilot.php', 'devpilot');
             $this->publishes([

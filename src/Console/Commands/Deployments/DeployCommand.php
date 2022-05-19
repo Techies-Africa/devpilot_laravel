@@ -5,21 +5,21 @@ namespace TechiesAfrica\Devpilot\Console\Commands\Deployments;
 use Illuminate\Console\Command;
 use TechiesAfrica\Devpilot\Services\Deployments\DeploymentService;
 
-class DeploymentsCommand extends Command
+class DeployCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'devpilot:deploy';
+    protected $signature = 'deploy';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Deploy an application';
+    protected $description = 'Deploy an application quickly';
 
     /**
      * Create a new command instance.
@@ -38,7 +38,15 @@ class DeploymentsCommand extends Command
      */
     public function handle()
     {
-        $service = new DeploymentService();
-        dd($service->deploy());
+        $this->deploy();
+    }
+
+    private function deploy()
+    {
+        $params = [
+            '--branch' => config("devpilot.default_branch"),
+            '--hooks' => "active"
+        ];
+        $this->call('devpilot:deploy', $params);
     }
 }
