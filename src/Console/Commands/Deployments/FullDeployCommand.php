@@ -5,17 +5,21 @@ namespace TechiesAfrica\Devpilot\Console\Commands\Deployments;
 use Illuminate\Console\Command;
 use TechiesAfrica\Devpilot\Exceptions\Deployments\DeploymentException;
 use TechiesAfrica\Devpilot\Exceptions\General\GuzzleException;
+use TechiesAfrica\Devpilot\Exceptions\General\ValidationException;
 use TechiesAfrica\Devpilot\Services\Deployments\DeploymentService;
+use TechiesAfrica\Devpilot\Traits\Commands\DeploymentTrait;
+use TechiesAfrica\Devpilot\Traits\Commands\LayoutTrait;
 use Throwable;
 
 class FullDeployCommand extends Command
 {
+    use DeploymentTrait, LayoutTrait;
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'devpilot:deploy {--b=|branch=} {--h=|hooks=}';
+    protected $signature = 'devpilot:deploy {--b=|branch=} {--h=|hooks=} {--refresh_interval=10}';
 
     /**
      * The console command description.
@@ -30,9 +34,12 @@ class FullDeployCommand extends Command
      * @return void
      */
     private $options_array = [];
+    public DeploymentService $service;
     public function __construct()
     {
         parent::__construct();
+        $this->service = new DeploymentService();
+
     }
 
     /**
@@ -43,11 +50,20 @@ class FullDeployCommand extends Command
     public function handle()
     {
         try {
-            $this->info("Initializing deployment");
+            $this->consoleHeader();
+            $this->info("Initializing deployment...");
             $this->withOptions();
             $this->validateOptions();
-            $service = new DeploymentService();
-            dd($service->deploy($this->options_array));
+
+
+
+            $deployment = $this->deploy();
+            $this->showDeployment($deployment);
+            $this->info("Listening to progress...");
+            $this->listenToUpdates($deployment["id"] , $this->option("refresh_interval") ?? 10);
+
+        } catch (ValidationException $e) {
+            $this->displayValidatorErrors($e->errors);
         } catch (GuzzleException $e) {
             $this->error($e->getMessage());
         } catch (DeploymentException $e) {
@@ -55,20 +71,6 @@ class FullDeployCommand extends Command
         } catch (Throwable $e) {
             throw $e;
         }
-    }
-
-    public function withOptions()
-    {
-        $this->options_array = [
-            "branch" => $this->option("branch"),
-            "hooks" => $this->option("hooks"),
-        ];
-    }
-
-    public function validateOptions()
-    {
-        if (!in_array($this->options_array["hooks"], [null, "active", "inactive", "all"])) {
-            throw new DeploymentException("Invalid hooks value provided. Allowed values are: active, inactive and all.");
-        }
+        $this->consoleHeader();
     }
 }

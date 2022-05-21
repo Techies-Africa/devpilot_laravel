@@ -4,6 +4,7 @@ namespace TechiesAfrica\Devpilot\Services\General\Guzzle;
 
 use Exception;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\BadResponseException;
 use TechiesAfrica\Devpilot\Exceptions\General\GuzzleException;
 use Throwable;
 
@@ -39,7 +40,7 @@ class GuzzleService
                 ]
             );
             return $this->success($response);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return $this->error($e);
         }
     }
@@ -55,7 +56,7 @@ class GuzzleService
                 ]
             );
             return $this->success($response);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return $this->error($e);
         }
     }
@@ -70,7 +71,7 @@ class GuzzleService
                 ]
             );
             return $this->success($response);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return $this->error($e);
         }
     }
@@ -87,7 +88,13 @@ class GuzzleService
 
     private function error(Throwable $e)
     {
-        return self::response($e->getMessage(), $e->getCode());
+        try {
+            throw $e;
+        } catch (BadResponseException $e) {
+            return self::response($e->getResponse()->getBody()->getContents(), $e->getCode());
+        } catch (Throwable $e) {
+            return self::response($e->getMessage(), $e->getCode());
+        }
     }
 
     private function response($message, $status, $data = null)
@@ -101,7 +108,7 @@ class GuzzleService
 
     public function validateResponse(array $process)
     {
-        if($process["status"] == 0){
+        if ($process["status"] == 0) {
             throw new GuzzleException("Unable to connect to remote server. Kindly check your internet connection and retry.");
         }
     }

@@ -5,12 +5,25 @@ namespace TechiesAfrica\Devpilot\Constants;
 
 class UrlConstants
 {
-    const VERSION = "v1";
-
-    const LOG_ACTIVITY = "/activity-tracker/visits/log";
-
-    public static function get($relative_endpoint , $version = self::VERSION)
+    public static function get($relative_endpoint): string
     {
-        return config("devpilot.base_url")."api/".$version.$relative_endpoint;
+        return config("devpilot.base_url") . $relative_endpoint;
     }
+
+    static function logActivity(): string
+    {
+        return self::get("/app/activity-tracker/visits/log");
+    }
+
+    // Deployment
+    static function deploy(): string
+    {
+        return self::get("/app/deployments/deploy");
+    }
+
+    static function deploymentInformation(): string
+    {
+        return self::get("/app/deployments/information");
+    }
+
 }

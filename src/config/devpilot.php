@@ -5,6 +5,7 @@ return [
     "base_url" => env("DEVPILOT_BASE_URL", null),
     // The user whose account to authorize with i.e , you the developer
     "user_access_token" => env("DEVPILOT_USER_TOKEN", null),
+    "user_access_token_passphrase" => env("DEVPILOT_USER_TOKEN_PASSPHRASE", null),
 
     // Details of the app to connect with
     "app_key" => env("DEVPILOT_APP_KEY", null),
