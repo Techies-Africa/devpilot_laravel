@@ -1,8 +1,8 @@
 <?php
 
-namespace TechiesAfrica\Devpilot\Services\Deployments;
+namespace TechiesAfrica\Devpilot\Services;
 
-class BaseDeploymentService
+class BaseService
 {
     public function __construct()
     {

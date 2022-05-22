@@ -2,12 +2,11 @@
 
 namespace TechiesAfrica\Devpilot\Services\Deployments;
 
-use Exception;
 use TechiesAfrica\Devpilot\Constants\UrlConstants;
+use TechiesAfrica\Devpilot\Services\BaseService;
 use TechiesAfrica\Devpilot\Services\General\Guzzle\GuzzleService;
-use Throwable;
 
-class DeploymentService extends BaseDeploymentService
+class DeploymentService extends BaseService
 {
     public function deploy(array $options = [])
     {

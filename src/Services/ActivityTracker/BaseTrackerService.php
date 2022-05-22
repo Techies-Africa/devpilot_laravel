@@ -4,9 +4,10 @@ namespace TechiesAfrica\Devpilot\Services\ActivityTracker;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use TechiesAfrica\Devpilot\Services\BaseService;
 use Throwable;
 
-class BaseTrackerService
+class BaseTrackerService extends BaseService
 {
     protected Request $request;
     protected bool $can_log = true;
@@ -29,10 +30,7 @@ class BaseTrackerService
     public function __construct()
     {
         $this->setShouldLog(config("devpilot.enable_activity_tracking", true));
-        $this->user_access_token = config("devpilot.user_access_token");
-        $this->passphrase = config("devpilot.user_access_token_passphrase");
-        $this->app_key = config("devpilot.app_key");
-        $this->app_secret = config("devpilot.app_secret");
+        parent::__construct();
     }
 
     public function preRequest(Request $request)

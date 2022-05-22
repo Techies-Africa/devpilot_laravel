@@ -9,6 +9,7 @@ use TechiesAfrica\Devpilot\Console\Commands\ActivityTracker\TestCommand;
 use TechiesAfrica\Devpilot\Console\Commands\Deployments\DeployCommand;
 use TechiesAfrica\Devpilot\Console\Commands\Deployments\FullDeployCommand;
 use TechiesAfrica\Devpilot\Console\Commands\General\InstallCommand;
+use TechiesAfrica\Devpilot\Console\Commands\Server\ScriptCommand;
 use TechiesAfrica\Devpilot\Middleware\ActivityTracker\TrackerMiddleware;
 use TechiesAfrica\Devpilot\Services\ActivityTracker\TrackerService;
 
@@ -53,6 +54,9 @@ class DevpilotServiceProvider extends ServiceProvider
                 // Activity Tracker
                 StatusCommand::class,
                 TestCommand::class,
+
+                // Remote Scripts
+                ScriptCommand::class
 
             ]);
             $this->mergeConfigFrom(__DIR__ . '/../config/devpilot.php', 'devpilot');
