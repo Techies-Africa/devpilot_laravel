@@ -57,7 +57,10 @@ class TrackerService extends BaseTrackerService
     public function build()
     {
         return [
-            "app_key" => config("devpilot.app_key"),
+            "user_access_token" => $this->user_access_token,
+            "passphrase" => $this->passphrase,
+            "app_key" => $this->app_key,
+            "app_secret" => $this->app_secret,
             "request_time" => $this->request_time,
             "response_time" => $this->response_time,
             "payload" => [
@@ -80,10 +83,11 @@ class TrackerService extends BaseTrackerService
             return null;
         }
 
-        $url = UrlConstants::get(UrlConstants::LOG_ACTIVITY);
+        $url = UrlConstants::logActivity();
         $data = $this->build();
 
         $guzzle = new GuzzleService($url);
-        return $guzzle->post($data);
+        $this->response_data = $guzzle->post($data);
+        return $this;
     }
 }

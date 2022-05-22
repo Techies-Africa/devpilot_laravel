@@ -38,8 +38,11 @@ trait ErrorHandlerTrait
     public function handleErrors($data)
     {
         if ($data["status"] == 422) {
-            $errors = json_decode($data["message"] , true)["errors"];
-            throw new ValidationException($data["message"] , $errors , $data["status"]);
+            $errors = json_decode($data["message"], true)["errors"];
+            throw new ValidationException($data["message"], $errors, $data["status"]);
+        } elseif ($data["status"] == 400) {
+            $message = json_decode($data["message"], true)["message"];
+            throw new DeploymentException($message);
         } else {
             throw new DeploymentException("An error occured on the server. Don`t worry , its not your fault.");
         }

@@ -4,12 +4,13 @@ namespace TechiesAfrica\Devpilot\Services\ActivityTracker;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class BaseTrackerService
 {
     protected Request $request;
     protected bool $can_log = true;
-    protected bool $should_log = true;
+    protected bool $should_log;
     protected $server = [];
     protected $headers = [];
     protected $route = [];
@@ -22,11 +23,16 @@ class BaseTrackerService
     protected $ignore_routes = [];
     protected $ignore_middlewares = ["Barryvdh\Debugbar\Middleware\DebugbarEnabled"];
     protected $authenticated_middlewares = ["auth", "admin", "verified"];
+    public $response_data;
 
 
     public function __construct()
     {
-        //
+        $this->setShouldLog(config("devpilot.enable_activity_tracking", true));
+        $this->user_access_token = config("devpilot.user_access_token");
+        $this->passphrase = config("devpilot.user_access_token_passphrase");
+        $this->app_key = config("devpilot.app_key");
+        $this->app_secret = config("devpilot.app_secret");
     }
 
     public function preRequest(Request $request)
@@ -92,14 +98,17 @@ class BaseTrackerService
 
     public function isAjax()
     {
-        $middlewares = $this->request->route()->action["middleware"] ?? ["web"];
-        if ($this->request->wantsJson()  && in_array("web", $middlewares)) {
-            return true;
+        try {
+            $middlewares = $this->request->route()->action["middleware"] ?? ["web"];
+            if ($this->request->wantsJson()  && in_array("web", $middlewares)) {
+                return true;
+            }
+        } catch (Throwable $e) {
         }
         return false;
     }
 
-    protected function canPush()
+    public function canPush()
     {
         if (empty(config("devpilot.app_key")) || empty(config("devpilot.base_url"))) {
             return false;

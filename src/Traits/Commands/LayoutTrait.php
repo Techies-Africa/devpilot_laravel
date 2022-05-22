@@ -10,14 +10,14 @@ trait LayoutTrait
     public function consoleHeader()
     {
         $this->line("------------------------------");
-        $this->line('<fg=blue>       Dev<fg=white;bg=black>pilot</>');
+        $this->line('<fg=white;bg=black>Starting<fg=blue> Dev<fg=white;bg=black>pilot</>');
         $this->line("------------------------------");
     }
 
     public function consoleFooter()
     {
         $this->line("------------------------------");
-        $this->line('<fg=blue>       Dev<fg=white;bg=black>pilot</>');
+        $this->line('<fg=white;bg=black>Exiting<fg=blue> Dev<fg=white;bg=black>pilot</>');
         $this->line("------------------------------");
     }
 }

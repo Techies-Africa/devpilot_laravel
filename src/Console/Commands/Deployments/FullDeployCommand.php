@@ -19,7 +19,7 @@ class FullDeployCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'devpilot:deploy {--b=|branch=} {--h=|hooks=} {--refresh_interval=10}';
+    protected $signature = 'devpilot:deploy {--b=|branch=} {--h=|hooks=} {--refresh_interval=10} {--s|silent=false}';
 
     /**
      * The console command description.
@@ -39,7 +39,6 @@ class FullDeployCommand extends Command
     {
         parent::__construct();
         $this->service = new DeploymentService();
-
     }
 
     /**
@@ -59,9 +58,15 @@ class FullDeployCommand extends Command
 
             $deployment = $this->deploy();
             $this->showDeployment($deployment);
-            $this->info("Listening to progress...");
-            $this->listenToUpdates($deployment["id"] , $this->option("refresh_interval") ?? 10);
 
+            if ($this->option("silent") ?? false) {
+                $show_url = $deployment["show_url"];
+                $this->info("Deployment running in the background...");
+                $this->info("TO view deployment progress , here`s the link: $show_url");
+            } else {
+                $this->info("Listening to progress...");
+                $this->listenToUpdates($deployment["id"], $this->option("refresh_interval") ?? 10);
+            }
         } catch (ValidationException $e) {
             $this->displayValidatorErrors($e->errors);
         } catch (GuzzleException $e) {
@@ -71,6 +76,6 @@ class FullDeployCommand extends Command
         } catch (Throwable $e) {
             throw $e;
         }
-        $this->consoleHeader();
+        $this->consoleFooter();
     }
 }

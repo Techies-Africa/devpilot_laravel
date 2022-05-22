@@ -4,9 +4,12 @@ namespace TechiesAfrica\Devpilot\Console\Commands\General;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use TechiesAfrica\Devpilot\Traits\Commands\LayoutTrait;
 
 class InstallCommand extends Command
 {
+    use LayoutTrait;
+
     /**
      * The name and signature of the console command.
      *
@@ -39,42 +42,54 @@ class InstallCommand extends Command
 
     public function handle()
     {
-        $this->info('Installing Devpilot...');
+        $this->consoleHeader();
 
-        $this->info('Publishing configuration...');
+        $this->info('Setting up application package...');
 
-        if (!$this->configExists('devpilot.php')) {
-            $this->publishConfiguration();
+        if (!$this->fileExists(config_path("devpilot.php"))) {
+            $this->publishFile("config", false);
         } else {
-            if ($this->shouldOverwriteConfig()) {
+            if ($this->shouldOverwriteFile('Config file already exists. Do you want to overwrite it?')) {
                 $this->info('Overwriting configuration file...');
-                $this->publishConfiguration(true);
+                $this->publishFile("config", true);
             } else {
                 $this->info('Existing configuration was not overwritten');
             }
         }
 
+        if (!$this->fileExists(app_path("Http/Middleware/ActivityTracker/TrackerMiddleware.php"))) {
+            $this->publishFile("middleware", false);
+        } else {
+            if ($this->shouldOverwriteFile('Middleware file already exists. Do you want to overwrite it?')) {
+                $this->info('Overwriting middleware file...');
+                $this->publishFile("middleware", true);
+            } else {
+                $this->info('Existing middleware was not overwritten');
+            }
+        }
+
         $this->info('Installed Devpilot sucessfully...');
+        $this->consoleFooter();
     }
 
-    private function configExists($fileName)
+    private function fileExists($file_path)
     {
-        return File::exists(config_path($fileName));
+        return File::exists($file_path);
     }
 
-    private function shouldOverwriteConfig()
+    private function shouldOverwriteFile($message)
     {
         return $this->confirm(
-            'Config file already exists. Do you want to overwrite it?',
+            $message,
             false
         );
     }
 
-    private function publishConfiguration($forcePublish = false)
+    private function publishFile($tag, $forcePublish = false)
     {
         $params = [
             '--provider' => "TechiesAfrica\Devpilot\Providers\DevpilotServiceProvider",
-            '--tag' => "config"
+            '--tag' => $tag
         ];
 
         if ($forcePublish === true) {
