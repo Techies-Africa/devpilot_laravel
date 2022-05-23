@@ -1,46 +1,45 @@
 <?php
 
-namespace TechiesAfrica\Devpilot\Console\Commands\Server;
+namespace TechiesAfrica\Devpilot\Console\Commands\Env;
 
 use Illuminate\Console\Command;
 use TechiesAfrica\Devpilot\Exceptions\General\GuzzleException;
 use TechiesAfrica\Devpilot\Exceptions\General\ServerErrorException;
 use TechiesAfrica\Devpilot\Exceptions\General\ValidationException;
-use TechiesAfrica\Devpilot\Services\Server\ServerService;
+use TechiesAfrica\Devpilot\Services\Env\EnvService;
+use TechiesAfrica\Devpilot\Traits\Commands\EnvTrait;
 use TechiesAfrica\Devpilot\Traits\Commands\LayoutTrait;
-use TechiesAfrica\Devpilot\Traits\Commands\ScriptTrait;
 use Throwable;
 
-class ScriptCommand extends Command
+class LoadCommand extends Command
 {
-    use LayoutTrait, ScriptTrait;
+    use LayoutTrait, EnvTrait;
 
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'devpilot:script {--command=*}';
+    protected $signature = 'devpilot:env:load {--f|filename=.env}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Run commands on an application`s remote server';
+    protected $description = 'Load the .env content from a remote application';
 
     /**
      * Create a new command instance.
      *
      * @return void
      */
-    public ServerService $service;
+    public EnvService $service;
     public function __construct()
     {
         parent::__construct();
-        $this->service = new ServerService();
+        $this->service = new EnvService();
     }
-
 
     /**
      * Execute the console command.
@@ -53,16 +52,10 @@ class ScriptCommand extends Command
         try {
 
             $this->consoleHeader();
-            $commands = $this->option("command");
-            if (count($commands) > 0) {
-
-                $this->line("Initializing script ececution...");
-                $scripts = $this->executeAppCommands($commands);
-                $this->displayResponse($scripts);
-                $this->line("Script execution completed....");
-            } else {
-                $this->warn("No commands were passed to be executed....");
-            }
+            $filename = $this->option("filename");
+            $this->line("Connection to remote application...");
+            $this->load($filename);
+            $this->line("Env values loaded to .env.devpilot file successfully ....");
         } catch (ValidationException $e) {
             $this->displayValidatorErrors($e->errors);
         } catch (GuzzleException $e) {

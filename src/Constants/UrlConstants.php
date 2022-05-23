@@ -30,6 +30,16 @@ class UrlConstants
         return self::get("/workspace/app/server/execute");
     }
 
+    static function loadEnv(): string
+    {
+        return self::get("/workspace/app/env/load");
+    }
+
+    static function saveEnv(): string
+    {
+        return self::get("/workspace/app/env/save");
+    }
+    
     static function executeServerCommands(): string
     {
         return self::get("/server/execute");

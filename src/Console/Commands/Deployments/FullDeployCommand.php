@@ -5,6 +5,7 @@ namespace TechiesAfrica\Devpilot\Console\Commands\Deployments;
 use Illuminate\Console\Command;
 use TechiesAfrica\Devpilot\Exceptions\Deployments\DeploymentException;
 use TechiesAfrica\Devpilot\Exceptions\General\GuzzleException;
+use TechiesAfrica\Devpilot\Exceptions\General\ServerErrorException;
 use TechiesAfrica\Devpilot\Exceptions\General\ValidationException;
 use TechiesAfrica\Devpilot\Services\Deployments\DeploymentService;
 use TechiesAfrica\Devpilot\Traits\Commands\DeploymentTrait;
@@ -72,6 +73,8 @@ class FullDeployCommand extends Command
         } catch (GuzzleException $e) {
             $this->error($e->getMessage());
         } catch (DeploymentException $e) {
+            $this->warn($e->getMessage());
+        } catch (ServerErrorException $e) {
             $this->warn($e->getMessage());
         } catch (Throwable $e) {
             throw $e;

@@ -4,10 +4,9 @@ namespace TechiesAfrica\Devpilot\Console\Commands\ActivityTracker;
 
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Helper\Table;
-use TechiesAfrica\Devpilot\Exceptions\Deployments\DeploymentException;
 use TechiesAfrica\Devpilot\Exceptions\General\GuzzleException;
+use TechiesAfrica\Devpilot\Exceptions\General\ServerErrorException;
 use TechiesAfrica\Devpilot\Exceptions\General\ValidationException;
-use TechiesAfrica\Devpilot\Services\ActivityTracker\TrackerService;
 use TechiesAfrica\Devpilot\Traits\Commands\ActivityTrackerTrait;
 use TechiesAfrica\Devpilot\Traits\Commands\LayoutTrait;
 use Throwable;
@@ -72,7 +71,7 @@ class TestCommand extends Command
             $this->displayValidatorErrors($e->errors);
         } catch (GuzzleException $e) {
             $this->error($e->getMessage());
-        } catch (DeploymentException $e) {
+        } catch (ServerErrorException $e) {
             $this->warn($e->getMessage());
         } catch (Throwable $e) {
             throw $e;
