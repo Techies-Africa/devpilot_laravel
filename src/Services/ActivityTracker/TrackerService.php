@@ -57,8 +57,6 @@ class TrackerService extends BaseTrackerService
     public function build()
     {
         return [
-            "user_access_token" => $this->user_access_token,
-            "passphrase" => $this->passphrase,
             "app_key" => $this->app_key,
             "app_secret" => $this->app_secret,
             "request_time" => $this->request_time,
@@ -86,8 +84,8 @@ class TrackerService extends BaseTrackerService
         $url = UrlConstants::logActivity();
         $data = $this->build();
 
-        $guzzle = new GuzzleService($url);
-        $this->response_data = $guzzle->post($data);
+        $process = $this->guzzle->post($url , $data);
+        $this->guzzle->validateResponse($process);
         return $this;
     }
 }

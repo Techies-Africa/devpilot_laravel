@@ -26,7 +26,6 @@ class DevpilotServiceProvider extends ServiceProvider
         $this->app->singleton(TrackerService::class, function ($app) {
             return new TrackerService();
         });
-        // $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
     }
 
 

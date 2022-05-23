@@ -10,18 +10,15 @@ use Throwable;
 
 class GuzzleService
 {
-    public string $url;
     public array $headers;
     public Client $client;
 
-    public function __construct(string $url, array $headers = [])
+    public function __construct(array $headers = [])
     {
-        $this->url = $url;
         $this->headers = array_merge(
             [
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
-                'Api-Version' => 'v1',
             ],
             $headers
         );
@@ -29,11 +26,11 @@ class GuzzleService
     }
 
 
-    public function post(array $data = [])
+    public function post(string $url, array $data = [])
     {
         try {
             $response = $this->client->post(
-                $this->url,
+                $url,
                 [
                     'headers' => $this->headers,
                     'json' => $data,
@@ -45,11 +42,11 @@ class GuzzleService
         }
     }
 
-    public function get(array $data = [])
+    public function get(string $url, array $data = [])
     {
         try {
             $response = $this->client->get(
-                $this->url,
+                $url,
                 [
                     'headers' => $this->headers,
                     'json' => $data,
@@ -61,11 +58,11 @@ class GuzzleService
         }
     }
 
-    public function delete()
+    public function delete($url)
     {
         try {
             $response = $this->client->delete(
-                $this->url,
+                $url,
                 [
                     'headers' => $this->headers,
                 ]
