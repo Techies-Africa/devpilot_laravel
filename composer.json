@@ -1,5 +1,5 @@
 {
-    "name": "techies-africa/devpilot",
+    "name": "techies-africa/devpilot_laravel",
     "description": "Official laravel client for Devpilot",
     "autoload": {
         "psr-4": {
