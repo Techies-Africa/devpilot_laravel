@@ -7,13 +7,14 @@ use TechiesAfrica\Devpilot\Exceptions\General\GuzzleException;
 use TechiesAfrica\Devpilot\Exceptions\General\ServerErrorException;
 use TechiesAfrica\Devpilot\Exceptions\General\ValidationException;
 use TechiesAfrica\Devpilot\Services\Env\EnvService;
+use TechiesAfrica\Devpilot\Traits\Commands\ConfigTrait;
 use TechiesAfrica\Devpilot\Traits\Commands\EnvTrait;
 use TechiesAfrica\Devpilot\Traits\Commands\LayoutTrait;
 use Throwable;
 
 class LoadCommand extends Command
 {
-    use LayoutTrait, EnvTrait;
+    use LayoutTrait, EnvTrait, ConfigTrait;
 
     /**
      * The name and signature of the console command.
@@ -35,10 +36,12 @@ class LoadCommand extends Command
      * @return void
      */
     public EnvService $service;
+    public $env_path;
     public function __construct()
     {
         parent::__construct();
         $this->service = new EnvService();
+        $this->env_path = base_path(".devpilot/.env");
     }
 
     /**
@@ -52,10 +55,11 @@ class LoadCommand extends Command
         try {
 
             $this->consoleHeader();
+            $this->hasWorkingDirectory();
             $filename = $this->option("filename");
             $this->line("Connection to remote application...");
             $this->load($filename);
-            $this->line("Env values loaded to .env.devpilot file successfully...");
+            $this->line("Env values loaded successfully...");
         } catch (ValidationException $e) {
             $this->displayValidatorErrors($e->errors);
         } catch (GuzzleException $e) {

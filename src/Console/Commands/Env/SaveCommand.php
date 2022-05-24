@@ -7,13 +7,14 @@ use TechiesAfrica\Devpilot\Exceptions\General\GuzzleException;
 use TechiesAfrica\Devpilot\Exceptions\General\ServerErrorException;
 use TechiesAfrica\Devpilot\Exceptions\General\ValidationException;
 use TechiesAfrica\Devpilot\Services\Env\EnvService;
+use TechiesAfrica\Devpilot\Traits\Commands\ConfigTrait;
 use TechiesAfrica\Devpilot\Traits\Commands\EnvTrait;
 use TechiesAfrica\Devpilot\Traits\Commands\LayoutTrait;
 use Throwable;
 
 class SaveCommand extends Command
 {
-    use LayoutTrait, EnvTrait;
+    use LayoutTrait, EnvTrait , ConfigTrait;
 
     /**
      * The name and signature of the console command.
@@ -52,6 +53,7 @@ class SaveCommand extends Command
         try {
 
             $this->consoleHeader();
+            $this->hasWorkingDirectory();
             $filename = $this->option("filename");
             $this->line("Connection to remote application...");
             $this->save($filename);

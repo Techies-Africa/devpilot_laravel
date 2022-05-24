@@ -8,13 +8,14 @@ use TechiesAfrica\Devpilot\Exceptions\General\GuzzleException;
 use TechiesAfrica\Devpilot\Exceptions\General\ServerErrorException;
 use TechiesAfrica\Devpilot\Exceptions\General\ValidationException;
 use TechiesAfrica\Devpilot\Services\Deployments\DeploymentService;
+use TechiesAfrica\Devpilot\Traits\Commands\ConfigTrait;
 use TechiesAfrica\Devpilot\Traits\Commands\DeploymentTrait;
 use TechiesAfrica\Devpilot\Traits\Commands\LayoutTrait;
 use Throwable;
 
 class FullDeployCommand extends Command
 {
-    use DeploymentTrait, LayoutTrait;
+    use DeploymentTrait, LayoutTrait, ConfigTrait;
     /**
      * The name and signature of the console command.
      *
@@ -42,7 +43,6 @@ class FullDeployCommand extends Command
         parent::__construct();
         $this->service = new DeploymentService();
         $this->config_path = base_path(".devpilot/deployment/deployment.json");
-
     }
 
     /**
@@ -54,6 +54,7 @@ class FullDeployCommand extends Command
     {
         try {
             $this->consoleHeader();
+            $this->hasWorkingDirectory();
             $this->info("Initializing deployment...");
             $this->withOptions();
             $this->loadConfig();
