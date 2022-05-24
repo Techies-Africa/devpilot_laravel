@@ -1,7 +1,6 @@
 <?php
 
-namespace App\Http\Middleware\ActivityTracker;
-// namespace TechiesAfrica\Devpilot\Middleware\ActivityTracker;
+namespace App\Http\Middleware\Devpilot\ActivityTracker;
 
 
 use Closure;
@@ -29,10 +28,10 @@ class TrackerMiddleware
         // Ignore middlewates you dont`t want to track
         // $tracker->setIgnoreMiddlewares(["Barryvdh\Debugbar\Middleware\DebugbarEnabled"]);
 
-         // Set middlewares used to identify authenticated users
+        // Set middlewares used to identify authenticated users
         // $tracker->setAuthenticatedMiddlewares(["auth" , "admin" , "verified"]);
 
-        // Set values for authenticated user
+        // Set values for authenticated user mapping based of columns in the users table
         $tracker->setUserFields(["id" => "id", "name" => "full_name", "email" => "email"]);
 
         // Toggle logging as necessary, default is true unless otherwise stated in your .env
@@ -43,7 +42,9 @@ class TrackerMiddleware
         $response =  $next($request);
 
         // TrackerService::log("pushing data");
+
         $tracker->postRequest($request)->push();
+
         return $response;
     }
 }

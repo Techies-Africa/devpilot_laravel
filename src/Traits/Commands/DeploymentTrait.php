@@ -18,7 +18,28 @@ trait DeploymentTrait
         $this->options_array = [
             "branch" => $this->option("branch"),
             "hooks" => $this->option("hooks"),
+            "commands" => null,
+            "storage_paths" => null,
         ];
+    }
+
+    public function loadConfig()
+    {
+        $config_path = $this->config_path;
+        if (!file_exists($config_path)) {
+            return;
+        }
+        $config_content = file_get_contents($config_path);
+        if (empty($config_content)) {
+            return;
+        }
+        $config = json_decode($config_content, true);
+        if (empty($config)) {
+            return;
+        }
+        $this->options_array["hooks"] = $this->options_array["hooks"] ?? $config["hooks"]["status"] ?? null;
+        $this->options_array["commands"] = $config["hooks"]["commands"] ?? null;
+        $this->options_array["storage_paths"] = $config["storage"]["paths"] ?? null;
     }
 
     public function validateOptions()
@@ -26,7 +47,61 @@ trait DeploymentTrait
         if (!in_array($this->options_array["hooks"], [null, "active", "inactive", "all"])) {
             throw new DeploymentException("Invalid hooks value provided. Allowed values are: active, inactive and all.");
         }
+
+        $config_path = $this->config_path;
+        $commands = [];
+        $paths = [];
+        if (!empty($commands_ = $this->options_array["commands"])) {
+            foreach ($commands_ as $command) {
+                foreach ($fields = ["name", "command", "type", "execute"] as $field) {
+                    if (empty($command[$field] ?? null)) {
+                        throw new DeploymentException("The field <fg=red>$field</> in $config_path under the commands options is required.
+                        \n<fg=green>Required fields for commands are: " . implode(", ", $fields) . ".</>");
+                    }
+                }
+                if (!$command["execute"] ?? false) {
+                    continue;
+                }
+                unset($command["execute"]);
+                if (!in_array($t = $command["type"], ["update", "delete"])) {
+                    throw new DeploymentException("The type <fg=red>$t</> found in $config_path under the commands options is invalid.
+                    \n<fg=green>Options are: pre_release, post_release.</>");
+                }
+
+                $commands[] = $command;
+            }
+        }
+
+        if (!empty($paths_ = $this->options_array["storage_paths"])) {
+            foreach ($paths_ as $path) {
+                foreach ($fields = ["path", "action","execute"] as $field) {
+                    if (empty($path[$field] ?? null)) {
+                        throw new DeploymentException("The field <fg=red>$field</> in $config_path under the storage options is required.
+                        \n<fg=green>Required fields for commands are: " . implode(", ", $fields) . ".</>");
+                    }
+                }
+                if (!$path["execute"] ?? false) {
+                    continue;
+                }
+                unset($path["execute"]);
+                if (!in_array($a = $path["action"], ["update", "delete"])) {
+                    throw new DeploymentException("The action <fg=red>$a</> found in $config_path under the storage options is invalid.
+                    \n<fg=green>Options are: update, delete.</>");
+                }
+                if (!file_exists($p = $path["path"])) {
+                    throw new DeploymentException("The path <fg=red>$p</> found in $config_path under the storage options does not exist.");
+                }
+                $paths[] = $path;
+            }
+        }
+
+        $this->options_array["commands"] = empty($commands) ? null : $commands;
+        $this->options_array["storage_paths"] =  empty($paths) ? null : $paths;
+        dd($this->options_array);
     }
+
+
+
 
     public function listDeployments(array $deployments)
     {
@@ -96,7 +171,7 @@ trait DeploymentTrait
 
     public function deploy(): array
     {
-        if (!config("devpilot.enable_deployment" , false)) {
+        if (!config("devpilot.enable_deployment", false)) {
             throw new ServerErrorException("Deployment is disabled from your configurations.");
         }
 

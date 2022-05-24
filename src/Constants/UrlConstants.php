@@ -39,7 +39,7 @@ class UrlConstants
     {
         return self::get("/workspace/app/env/save");
     }
-    
+
     static function executeServerCommands(): string
     {
         return self::get("/server/execute");

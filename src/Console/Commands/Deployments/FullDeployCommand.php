@@ -35,11 +35,14 @@ class FullDeployCommand extends Command
      * @return void
      */
     private $options_array = [];
+    public $config_path;
     public DeploymentService $service;
     public function __construct()
     {
         parent::__construct();
         $this->service = new DeploymentService();
+        $this->config_path = base_path(".devpilot/deployment/deployment.json");
+
     }
 
     /**
@@ -53,6 +56,7 @@ class FullDeployCommand extends Command
             $this->consoleHeader();
             $this->info("Initializing deployment...");
             $this->withOptions();
+            $this->loadConfig();
             $this->validateOptions();
 
             $deployment = $this->deploy();

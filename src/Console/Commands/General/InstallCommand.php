@@ -57,7 +57,7 @@ class InstallCommand extends Command
             }
         }
 
-        if (!$this->fileExists(app_path("Http/Middleware/ActivityTracker/TrackerMiddleware.php"))) {
+        if (!$this->fileExists(app_path("Http/Middleware/Devpilot/ActivityTracker/TrackerMiddleware.php"))) {
             $this->publishFile("middleware", false);
         } else {
             if ($this->shouldOverwriteFile('Middleware file already exists. Do you want to overwrite it?')) {
@@ -68,7 +68,18 @@ class InstallCommand extends Command
             }
         }
 
-        $this->info('Installed Devpilot sucessfully...');
+        if (!$this->fileExists(base_path(".devpilot"))) {
+            $this->publishFile("templates", false);
+        } else {
+            if ($this->shouldOverwriteFile('.devpilot folder already exists. Do you want to overwrite it?')) {
+                $this->info('Overwriting .devpilot folder...');
+                $this->publishFile("templates", true);
+            } else {
+                $this->info('Existing .devpilot folder was not overwritten');
+            }
+        }
+
+        $this->info("Devpilot installed sucessfully...");
         $this->consoleFooter();
     }
 
