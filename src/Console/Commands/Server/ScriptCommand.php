@@ -56,7 +56,7 @@ class ScriptCommand extends Command
             $commands = $this->option("command");
             if (count($commands) > 0) {
 
-                $this->line("Initializing script ececution...");
+                $this->line("Initializing script execution...");
                 $scripts = $this->executeAppCommands($commands);
                 $this->displayResponse($scripts);
                 $this->line("Script execution completed....");

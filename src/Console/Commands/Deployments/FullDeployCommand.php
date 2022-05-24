@@ -55,15 +55,13 @@ class FullDeployCommand extends Command
             $this->withOptions();
             $this->validateOptions();
 
-
-
             $deployment = $this->deploy();
             $this->showDeployment($deployment);
 
             if ($this->option("silent") ?? false) {
                 $show_url = $deployment["show_url"];
                 $this->info("Deployment running in the background...");
-                $this->info("TO view deployment progress , here`s the link: $show_url");
+                $this->info("To view deployment progress , here`s the link: $show_url");
             } else {
                 $this->info("Listening to progress...");
                 $this->listenToUpdates($deployment["id"], $this->option("refresh_interval") ?? 10);

@@ -44,7 +44,7 @@ trait ErrorHandlerTrait
             $message = json_decode($data["message"], true)["message"];
             throw new ServerErrorException($message);
         } else {
-            dd($data);
+            // dd($data);
             throw new ServerErrorException("An error occured on the server. Don`t worry , its not your fault.");
         }
     }

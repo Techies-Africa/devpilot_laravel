@@ -55,7 +55,7 @@ class SaveCommand extends Command
             $filename = $this->option("filename");
             $this->line("Connection to remote application...");
             $this->save($filename);
-            $this->line("Env values saved to remote application successfully ....");
+            $this->line("Env values saved to remote application successfully...");
         } catch (ValidationException $e) {
             $this->displayValidatorErrors($e->errors);
         } catch (GuzzleException $e) {

@@ -55,7 +55,7 @@ class LoadCommand extends Command
             $filename = $this->option("filename");
             $this->line("Connection to remote application...");
             $this->load($filename);
-            $this->line("Env values loaded to .env.devpilot file successfully ....");
+            $this->line("Env values loaded to .env.devpilot file successfully...");
         } catch (ValidationException $e) {
             $this->displayValidatorErrors($e->errors);
         } catch (GuzzleException $e) {

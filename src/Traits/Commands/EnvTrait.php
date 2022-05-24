@@ -18,7 +18,7 @@ trait EnvTrait
         $content = $process["data"]["data"];
         $raw_content = base64_decode($content);
         file_put_contents(base_path(".env.devpilot") , $raw_content);
-        $this->info("Created .env.devpilot file successfully");
+        $this->info("Created .env.devpilot file successfully.");
     }
 
     public function save($filename = null)
@@ -34,7 +34,7 @@ trait EnvTrait
         try {
             if(file_exists($file_path)){
                 unlink($file_path);
-                $this->info("Deleted .env.devpilot file successfully");
+                $this->info("Deleted .env.devpilot file successfully.");
             }
         } catch (\Throwable $th) {
             $this->warn("Unable to delete .env.devpilot file. Please try to delete it manually.");

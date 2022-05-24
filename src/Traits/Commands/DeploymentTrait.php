@@ -6,6 +6,7 @@ use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableSeparator;
 use TechiesAfrica\Devpilot\Exceptions\Deployments\DeploymentException;
+use TechiesAfrica\Devpilot\Exceptions\General\ServerErrorException;
 use TechiesAfrica\Devpilot\Traits\Commands\Errors\ErrorHandlerTrait;
 
 trait DeploymentTrait
@@ -95,10 +96,15 @@ trait DeploymentTrait
 
     public function deploy(): array
     {
+        if (config("devpilot.enable_deployment" , false)) {
+            throw new ServerErrorException("Deployment is disabled from your configurations.");
+        }
+
         $process  = $this->service->deploy($this->options_array);
         if (!in_array($process["status"], [200, 201])) {
             $this->handleErrors($process);
         }
+        
         return $process["data"]["data"];
     }
 
