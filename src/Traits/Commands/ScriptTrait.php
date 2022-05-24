@@ -49,6 +49,5 @@ trait ScriptTrait
         }
 
         $table->render();
-        $this->consoleFooter();
     }
 }

@@ -3,7 +3,7 @@
 namespace TechiesAfrica\Devpilot\Traits\Commands;
 
 use TechiesAfrica\Devpilot\Constants\UrlConstants;
-use TechiesAfrica\Devpilot\Exceptions\Deployments\DeploymentException;
+use TechiesAfrica\Devpilot\Exceptions\General\ServerErrorException;
 use TechiesAfrica\Devpilot\Services\ActivityTracker\TrackerService;
 use TechiesAfrica\Devpilot\Services\General\Guzzle\GuzzleService;
 use TechiesAfrica\Devpilot\Traits\Commands\Errors\ErrorHandlerTrait;
@@ -27,7 +27,7 @@ trait ActivityTrackerTrait
     {
         $tracker = new TrackerService;
         if (!$tracker->canPush()) {
-            throw new DeploymentException("Cannot push data to server. Kindly check that all configurations are set properly!");
+            throw new ServerErrorException("Cannot push data to server. Kindly check that all configurations are set properly!");
         }
         $payload = $this->buildPayload();
         $guzzle = new GuzzleService(UrlConstants::logActivity());
