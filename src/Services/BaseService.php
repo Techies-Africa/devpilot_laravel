@@ -2,6 +2,7 @@
 
 namespace TechiesAfrica\Devpilot\Services;
 
+use Illuminate\Support\Facades\Log;
 use TechiesAfrica\Devpilot\Services\General\Guzzle\GuzzleService;
 
 class BaseService
@@ -18,5 +19,10 @@ class BaseService
             "User-Access-Token" => $this->user_access_token,
             "User-Access-Passphrase" => $this->passphrase,
         ]);
+    }
+
+    public function logger(string $message, array $data = [] , $channel = "stack"): void
+    {
+        Log::channel($channel)->info($message, $data);
     }
 }

@@ -86,6 +86,8 @@ class TrackerService extends BaseTrackerService
 
         $process = $this->guzzle->post($url , $data);
         $this->guzzle->validateResponse($process);
+        $this->logResponse($process["message"] , $process["data"] ?? []);
+        $this->response_data = $process;
         return $this;
     }
 }

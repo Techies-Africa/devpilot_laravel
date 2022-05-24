@@ -12,6 +12,7 @@ class BaseTrackerService extends BaseService
     protected Request $request;
     protected bool $can_log = true;
     protected bool $should_log;
+    protected bool $enable_activity_tracker_logging = false;
     protected $server = [];
     protected $headers = [];
     protected $route = [];
@@ -30,6 +31,7 @@ class BaseTrackerService extends BaseService
     public function __construct()
     {
         $this->setShouldLog(config("devpilot.enable_activity_tracking", true));
+        $this->setEnableLogging(config("devpilot.enable_activity_tracker_logging", false));
         parent::__construct();
     }
 
@@ -94,6 +96,13 @@ class BaseTrackerService extends BaseService
         return $this;
     }
 
+    public function setEnableLogging(bool $value)
+    {
+        $this->enable_activity_tracker_logging = $value;
+        return $this;
+    }
+
+
     public function isAjax()
     {
         try {
@@ -120,10 +129,15 @@ class BaseTrackerService extends BaseService
         return true;
     }
 
-    public static function log($message, $data = [])
+    public static function log(string $message, array $data = []): void
     {
-        if (config("devpilot.enable_activity_tracker_logging")) {
-            Log::channel(config("devpilot.app_key"))->info($message, $data);
+        (new BaseTrackerService)->logResponse($message, $data);
+    }
+
+    public function logResponse(string $message, array $data = []): void
+    {
+        if ($this->enable_activity_tracker_logging) {
+            $this->logger($message , $data , config("devpilot.activity_tracker_log"));
         }
     }
 }

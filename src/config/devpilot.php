@@ -15,7 +15,7 @@ return [
 
 
 
-    
+
 
     // DEPLOYMENT SPIECIFIC CONFIGURATIONS
 
@@ -25,7 +25,7 @@ return [
     "default_branch" => env("DEVPILOT_DEFAULT_BRANCH", null),
 
     // Log deployment messages or errors
-    "enable_deployment_logging" => true,
+    "enable_deployment_logging" => false,
     "deployment_log" => env("DEVPILOT_LOG_CHANNEL", env('LOG_CHANNEL', 'stack')),
 
 
@@ -37,9 +37,7 @@ return [
     "enable_activity_tracking" => env("DEVPILOT_ENABLE_ACTIVITY_TRACKING", true),
 
     // Log activity tracking messages or errors
-    "enable_activity_tracker_logging" => true,
+    "enable_activity_tracker_logging" => false,
     "activity_tracker_log" => env("DEVPILOT_LOG_CHANNEL", env('LOG_CHANNEL', 'stack')),
-
-
 
 ];
