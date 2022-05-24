@@ -96,7 +96,7 @@ trait DeploymentTrait
 
     public function deploy(): array
     {
-        if (config("devpilot.enable_deployment" , false)) {
+        if (!config("devpilot.enable_deployment" , false)) {
             throw new ServerErrorException("Deployment is disabled from your configurations.");
         }
 
@@ -104,7 +104,7 @@ trait DeploymentTrait
         if (!in_array($process["status"], [200, 201])) {
             $this->handleErrors($process);
         }
-        
+
         return $process["data"]["data"];
     }
 
