@@ -54,7 +54,7 @@ trait DeploymentTrait
         if (!empty($commands_ = $this->options_array["commands"])) {
             foreach ($commands_ as $command) {
                 foreach ($fields = ["name", "command", "type", "execute"] as $field) {
-                    if (empty($command[$field] ?? null)) {
+                    if (in_array(($command[$field] ?? null), ["", null, " "])) {
                         throw new DeploymentException("The field <fg=red>$field</> in $config_path under the commands options is required.
                         \n<fg=green>Required fields for commands are: " . implode(", ", $fields) . ".</>");
                     }
@@ -74,8 +74,8 @@ trait DeploymentTrait
 
         if (!empty($paths_ = $this->options_array["storage_paths"])) {
             foreach ($paths_ as $path) {
-                foreach ($fields = ["path", "action","execute"] as $field) {
-                    if (empty($path[$field] ?? null)) {
+                foreach ($fields = ["path", "action", "execute"] as $field) {
+                    if (in_array(($path[$field] ?? null), ["", null, " "])) {
                         throw new DeploymentException("The field <fg=red>$field</> in $config_path under the storage options is required.
                         \n<fg=green>Required fields for commands are: " . implode(", ", $fields) . ".</>");
                     }
