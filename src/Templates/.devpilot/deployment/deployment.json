@@ -5,13 +5,13 @@
             {
                 "name": "Run migration",
                 "command": "php artisan migrate",
-                "type": "pre_release",
+                "type": "pre_deployment",
                 "execute": false
             },
             {
                 "name": "Run storage link",
                 "command": "php artisan storage:link",
-                "type": "post_release",
+                "type": "post_deployment",
                 "execute": false
             }
         ]

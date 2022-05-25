@@ -66,9 +66,9 @@ trait DeploymentTrait
                     }
                 }
 
-                if (!in_array($t = $command["type"], ["update", "delete"])) {
+                if (!in_array($t = $command["type"], ["pre_deployment", "post_deployment"])) {
                     throw new DeploymentException("The type <fg=red>$t</> found in $config_path under the commands options is invalid.
-                    \n<fg=green>Options are: pre_release, post_release.</>");
+                    \n<fg=green>Options are: pre_deployment, post_deployment.</>");
                 }
 
                 $commands[] = $command;
