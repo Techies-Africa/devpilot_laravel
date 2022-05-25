@@ -53,16 +53,19 @@ trait DeploymentTrait
         $paths = [];
         if (!empty($commands_ = $this->options_array["commands"])) {
             foreach ($commands_ as $command) {
-                foreach ($fields = ["name", "command", "type", "execute"] as $field) {
-                    if (in_array(($command[$field] ?? null), ["", null, " "])) {
-                        throw new DeploymentException("The field <fg=red>$field</> in $config_path under the commands options is required.
-                        \n<fg=green>Required fields for commands are: " . implode(", ", $fields) . ".</>");
-                    }
-                }
+
                 if (!$command["execute"] ?? false) {
                     continue;
                 }
                 unset($command["execute"]);
+
+                foreach ($fields = ["name", "command", "type"] as $field) {
+                    if (empty($command[$field] ?? null)) {
+                        throw new DeploymentException("The field <fg=red>$field</> in $config_path under the commands options is required.
+                        \n<fg=green>Required fields for commands are: " . implode(", ", $fields) . ".</>");
+                    }
+                }
+
                 if (!in_array($t = $command["type"], ["update", "delete"])) {
                     throw new DeploymentException("The type <fg=red>$t</> found in $config_path under the commands options is invalid.
                     \n<fg=green>Options are: pre_release, post_release.</>");
@@ -74,16 +77,19 @@ trait DeploymentTrait
 
         if (!empty($paths_ = $this->options_array["storage_paths"])) {
             foreach ($paths_ as $path) {
-                foreach ($fields = ["path", "action", "execute"] as $field) {
-                    if (in_array(($path[$field] ?? null), ["", null, " "])) {
-                        throw new DeploymentException("The field <fg=red>$field</> in $config_path under the storage options is required.
-                        \n<fg=green>Required fields for commands are: " . implode(", ", $fields) . ".</>");
-                    }
-                }
+
                 if (!$path["execute"] ?? false) {
                     continue;
                 }
                 unset($path["execute"]);
+
+                foreach ($fields = ["path", "action"] as $field) {
+                    if (empty($path[$field] ?? null)) {
+                        throw new DeploymentException("The field <fg=red>$field</> in $config_path under the storage options is required.
+                        \n<fg=green>Required fields for commands are: " . implode(", ", $fields) . ".</>");
+                    }
+                }
+
                 if (!in_array($a = $path["action"], ["update", "delete"])) {
                     throw new DeploymentException("The action <fg=red>$a</> found in $config_path under the storage options is invalid.
                     \n<fg=green>Options are: update, delete.</>");
