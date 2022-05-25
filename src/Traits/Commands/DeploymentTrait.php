@@ -103,7 +103,6 @@ trait DeploymentTrait
 
         $this->options_array["commands"] = empty($commands) ? null : $commands;
         $this->options_array["storage_paths"] =  empty($paths) ? null : $paths;
-        dd($this->options_array);
     }
 
 
