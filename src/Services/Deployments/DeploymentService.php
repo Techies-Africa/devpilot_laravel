@@ -43,10 +43,12 @@ class DeploymentService extends BaseService
             "app_secret" => $this->app_secret,
             "branch" => $options["branch"] ?? null,
             "hooks" => $options["hooks"] ?? null,
+            "commands" => $options["commands"] ?? null,
+            "storage_paths" => $options["storage_paths"] ?? null,
         ];
         $process = $this->guzzle->post($url, $data);
         $this->guzzle->validateResponse($process);
-        $this->logResponse($process["message"], $process["data"]);
+        $this->logResponse($process["message"], $process["data"] ?? []);
         return $process;
     }
 
