@@ -28,7 +28,7 @@ class FullDeployCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Deploy an application with full customizable options';
+    protected $description = 'Deploy an application with full customizable options.';
 
     /**
      * Create a new command instance.
@@ -66,9 +66,9 @@ class FullDeployCommand extends Command
             if ($this->option("silent") ?? false) {
                 $show_url = $deployment["show_url"];
                 $this->info("Deployment running in the background...");
-                $this->info("To view deployment progress , here`s the link: $show_url");
+                $this->info("To view deployment progress, here`s the link: $show_url");
             } else {
-                $this->info("Listening to progress...");
+                $this->info("Listening to deployment progress...");
                 $this->listenToUpdates($deployment["id"], $this->option("refresh_interval") ?? 10);
             }
         } catch (ValidationException $e) {

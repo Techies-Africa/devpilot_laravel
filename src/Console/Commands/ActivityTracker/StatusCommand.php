@@ -22,7 +22,7 @@ class StatusCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Show the status of the activity tracker service';
+    protected $description = 'Show the status of the activity tracker service.';
 
     /**
      * Create a new command instance.
@@ -43,7 +43,7 @@ class StatusCommand extends Command
     {
         $this->consoleHeader();
         $table = new Table($this->output);
-        $this->line("Activity Tracker status check started....");
+        $this->line("Activity tracker status check started....");
         $table->setHeaders([
             "#",
             "FIELD",

@@ -22,7 +22,7 @@ class InstallCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Setup devpilot on an application';
+    protected $description = 'Setup Devpilot on an application.';
 
     /**
      * Create a new command instance.

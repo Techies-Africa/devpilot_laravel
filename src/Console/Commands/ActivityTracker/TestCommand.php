@@ -50,7 +50,7 @@ class TestCommand extends Command
             $this->consoleHeader();
             $this->test();
             $table = new Table($this->output);
-            $this->line("Activity Tracker test started....");
+            $this->line("Activity tracker test started....");
             $table->setHeaders([
                 "#",
                 "FIELD",

@@ -28,7 +28,7 @@ class LoadCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Load the .env content from a remote application';
+    protected $description = 'Load the .env content from a remote application.';
 
     /**
      * Create a new command instance.

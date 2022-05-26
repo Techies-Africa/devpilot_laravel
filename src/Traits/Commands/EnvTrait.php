@@ -2,7 +2,6 @@
 
 namespace TechiesAfrica\Devpilot\Traits\Commands;
 
-use TechiesAfrica\Devpilot\Exceptions\General\ServerErrorException;
 use TechiesAfrica\Devpilot\Traits\Commands\Errors\ErrorHandlerTrait;
 
 trait EnvTrait

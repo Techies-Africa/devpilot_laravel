@@ -19,7 +19,7 @@ class DeployCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Deploy an application quickly';
+    protected $description = 'Deploy an application quickly using Devpilot.';
 
     /**
      * Create a new command instance.

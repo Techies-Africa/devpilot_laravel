@@ -28,7 +28,7 @@ class SaveCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Save the .env content to a remote application';
+    protected $description = 'Save the .env content to a remote application.';
 
     /**
      * Create a new command instance.
@@ -36,10 +36,12 @@ class SaveCommand extends Command
      * @return void
      */
     public EnvService $service;
+    public $env_path;
     public function __construct()
     {
         parent::__construct();
         $this->service = new EnvService();
+        $this->env_path = base_path(".devpilot/.env");
     }
 
     /**

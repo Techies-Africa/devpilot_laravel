@@ -1,6 +1,8 @@
 {
     "name": "techies-africa/devpilot_laravel",
     "description": "Official laravel client for Devpilot",
+    "keywords": ["ssh", "laravel" , "devpilot" , "deployments" , "ci/cd" , "autodeploy" , "deploy" , "techies africa"],
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "TechiesAfrica\\Devpilot\\": "src/"
@@ -12,8 +14,13 @@
             "email": "ugoloconfidence@gmail.com"
         }
     ],
-    "require": {},
-    "minimum-stability": "dev",
+    "require": {
+        "php": "^7.2|^8.0",
+        "guzzlehttp/guzzle": "^6.0|^7.0",
+        "illuminate/support": "^6.0|^7.0|^8.0|^9.0",
+        "symfony/console": "^4.3|^5.0|^6.0",
+        "symfony/process": "^4.3|^5.0|^6.0"
+    },
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
@@ -25,5 +32,7 @@
                 "TechiesAfrica\\Devpilot\\Providers\\DevpilotServiceProvider"
             ]
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

@@ -27,7 +27,7 @@ class ScriptCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Run commands on an application`s remote server';
+    protected $description = 'Run commands on an application`s remote server.';
 
     /**
      * Create a new command instance.
@@ -59,9 +59,9 @@ class ScriptCommand extends Command
                 $this->line("Initializing script execution...");
                 $scripts = $this->executeAppCommands($commands);
                 $this->displayResponse($scripts);
-                $this->line("Script execution completed....");
+                $this->line("Script execution completed...");
             } else {
-                $this->warn("No commands were passed to be executed....");
+                $this->warn("No commands were passed to be executed...");
             }
         } catch (ValidationException $e) {
             $this->displayValidatorErrors($e->errors);
