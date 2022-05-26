@@ -1,7 +1,7 @@
 {
     "name": "techies-africa/devpilot_laravel",
     "description": "Official laravel client for Devpilot",
-    "keywords": ["ssh", "laravel" , "devpilot" , "deployments" , "ci/cd" , "autodeploy" , "deploy" , "techies africa"],
+    "keywords": ["ssh", "laravel" , "devpilot" , "deployments" , "ci\/cd" , "autodeploy" , "deploy" , "techies africa"],
     "license": "MIT",
     "autoload": {
         "psr-4": {
