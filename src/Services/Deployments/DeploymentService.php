@@ -45,7 +45,9 @@ class DeploymentService extends BaseService
             "hooks" => $options["hooks"] ?? null,
             "commands" => $options["commands"] ?? null,
             "storage_paths" => $options["storage_paths"] ?? null,
+            "hostname" => shell_exec("hostname")
         ];
+        
         $process = $this->guzzle->post($url, $data);
         $this->guzzle->validateResponse($process);
         $this->logResponse($process["message"], $process["data"] ?? []);

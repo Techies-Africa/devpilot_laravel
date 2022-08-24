@@ -21,7 +21,7 @@ class FullDeployCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'devpilot:deploy {--b=|branch=} {--h=|hooks=} {--refresh_interval=10} {--s|silent=false}';
+    protected $signature = 'devpilot:deploy {--branch=} {--hooks=} {--refresh_interval=10} {--silent=true}';
 
     /**
      * The console command description.
@@ -63,7 +63,7 @@ class FullDeployCommand extends Command
             $deployment = $this->deploy();
             $this->showDeployment($deployment);
 
-            if ($this->option("silent") ?? false) {
+            if ($this->option("silent") == "true") {
                 $show_url = $deployment["show_url"];
                 $this->info("Deployment running in the background...");
                 $this->info("To view deployment progress, here`s the link: $show_url");

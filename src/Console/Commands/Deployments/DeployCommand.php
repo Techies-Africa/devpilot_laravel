@@ -45,7 +45,7 @@ class DeployCommand extends Command
     {
         $params = [
             '--branch' => config("devpilot.default_branch"),
-            '--hooks' => "active"
+            '--hooks' => "active",
         ];
         $this->call('devpilot:deploy', $params);
     }
