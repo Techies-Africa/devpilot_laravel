@@ -45,9 +45,11 @@ class DeploymentService extends BaseService
             "hooks" => $options["hooks"] ?? null,
             "commands" => $options["commands"] ?? null,
             "storage_paths" => $options["storage_paths"] ?? null,
-            "hostname" => shell_exec("hostname")
+            "hostname" => self::tryOrNull("hostname"),
+            "git_user" => self::tryOrNull("git config user.name"),
+            "git_email" => self::tryOrNull("git config user.email"),
         ];
-        
+
         $process = $this->guzzle->post($url, $data);
         $this->guzzle->validateResponse($process);
         $this->logResponse($process["message"], $process["data"] ?? []);
@@ -66,4 +68,14 @@ class DeploymentService extends BaseService
         $this->guzzle->validateResponse($process);
         return $process;
     }
+
+    private static function tryOrNull($command)
+    {
+        try {
+            return shell_exec($command);
+        } catch (\Throwable $th) {
+            return null;
+        }
+    }
+
 }
