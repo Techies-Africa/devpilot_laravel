@@ -31,13 +31,22 @@ return [
 
 
 
-
     // ACTIVITY TRACKER SPIECIFIC CONFIGURATIONS
-
     "enable_activity_tracking" => env("DEVPILOT_ENABLE_ACTIVITY_TRACKING", true),
 
-    // Log activity tracking messages or errors
+
+    // LOG ACTIVITY TRACKING MESSAGES OR ERRORS
     "enable_activity_tracker_logging" => false,
     "activity_tracker_log" => env("DEVPILOT_LOG_CHANNEL", env('LOG_CHANNEL', 'stack')),
 
+
+
+
+    // COMMAND FILTERS
+    "disabled_commands" => env("DEVPILOT_DISABLED_COMMANDS", [
+        "key:generate",
+        "migrate:fresh",
+        "migrate:refresh",
+        "migrate:rollback",
+    ]),
 ];

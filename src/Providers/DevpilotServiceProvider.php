@@ -2,6 +2,8 @@
 
 namespace TechiesAfrica\Devpilot\Providers;
 
+use Illuminate\Console\Events\CommandStarting;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use TechiesAfrica\Devpilot\Console\Commands\ActivityTracker\StatusCommand;
 use TechiesAfrica\Devpilot\Console\Commands\ActivityTracker\TestCommand;
@@ -12,6 +14,7 @@ use TechiesAfrica\Devpilot\Console\Commands\Env\LoadCommand;
 use TechiesAfrica\Devpilot\Console\Commands\Env\SaveCommand;
 use TechiesAfrica\Devpilot\Console\Commands\Server\ScriptCommand;
 use TechiesAfrica\Devpilot\Services\ActivityTracker\TrackerService;
+use TechiesAfrica\Devpilot\Services\General\Commands\CommandFilterService;
 
 class DevpilotServiceProvider extends ServiceProvider
 {
@@ -36,6 +39,9 @@ class DevpilotServiceProvider extends ServiceProvider
     public function boot()
     {
 
+        Event::listen(CommandStarting::class, function($event){
+            (new CommandFilterService)->handle($event);
+        });
         // $router = $this->app->make(Router::class);
         // $router->aliasMiddleware('activity_tracker', TrackerMiddleware::class);
 
