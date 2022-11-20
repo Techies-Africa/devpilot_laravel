@@ -5,7 +5,7 @@ namespace App\Http\Middleware\Devpilot\ActivityTracker;
 
 use Closure;
 use Illuminate\Http\Request;
-use TechiesAfrica\Devpilot\Services\ActivityTracker\TrackerService;
+use TechiesAfrica\Devpilot\Services\ActivityTracker\ActivityTrackerService;
 
 class TrackerMiddleware
 {
@@ -18,7 +18,7 @@ class TrackerMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        $tracker = TrackerService::tracker();
+        $tracker = ActivityTrackerService::tracker();
 
         // Ignore routes you dont`t want to track
         // $tracker->setIgnoreRoutes([
@@ -41,7 +41,7 @@ class TrackerMiddleware
 
         $response =  $next($request);
 
-        // TrackerService::log("pushing data");
+        // ActivityTrackerService::log("pushing data");
 
         $tracker->postRequest($request)->push();
 

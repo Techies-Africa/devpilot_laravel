@@ -4,7 +4,7 @@ namespace TechiesAfrica\Devpilot\Console\Commands\ActivityTracker;
 
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Helper\Table;
-use TechiesAfrica\Devpilot\Services\ActivityTracker\TrackerService;
+use TechiesAfrica\Devpilot\Services\ActivityTracker\ActivityTrackerService;
 use TechiesAfrica\Devpilot\Traits\Commands\LayoutTrait;
 
 class StatusCommand extends Command

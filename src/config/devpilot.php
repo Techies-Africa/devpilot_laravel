@@ -31,8 +31,9 @@ return [
 
 
 
-    // ACTIVITY TRACKER SPIECIFIC CONFIGURATIONS
+    // ACTIVITY TRACKER SPECIFIC CONFIGURATIONS
     "enable_activity_tracking" => env("DEVPILOT_ENABLE_ACTIVITY_TRACKING", true),
+    "activity_tracker_callback_url" => null,
 
 
     // LOG ACTIVITY TRACKING MESSAGES OR ERRORS
@@ -40,6 +41,13 @@ return [
     "activity_tracker_log" => env("DEVPILOT_LOG_CHANNEL", env('LOG_CHANNEL', 'stack')),
 
 
+    // ERROR TRACKER SPIECIFIC CONFIGURATIONS
+    "enable_error_tracking" => env("DEVPILOT_ENABLE_ERROR_TRACKING", true),
+    "error_tracker_callback_url" => null,
+
+    // LOG ACTIVITY TRACKING MESSAGES OR ERRORS
+    "enable_error_tracker_logging" => false,
+    "error_tracker_log" => env("DEVPILOT_LOG_CHANNEL", env('LOG_CHANNEL', 'stack')),
 
 
     // COMMAND FILTERS

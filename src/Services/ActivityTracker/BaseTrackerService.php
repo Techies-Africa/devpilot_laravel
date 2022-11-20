@@ -3,25 +3,17 @@
 namespace TechiesAfrica\Devpilot\Services\ActivityTracker;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use TechiesAfrica\Devpilot\Services\BaseService;
 use Throwable;
 
 class BaseTrackerService extends BaseService
 {
-    protected Request $request;
     protected bool $can_log = true;
     protected bool $should_log;
     protected bool $enable_activity_tracker_logging = false;
-    protected $server = [];
-    protected $headers = [];
     protected $route = [];
-    protected $extra_data;
     protected $request_time;
     protected $response_time;
-    protected $ip_address;
-    protected $user;
-    protected $user_fields = ["id" => "id", "name" => "name", "email" => "email"];
     protected $ignore_routes = [];
     protected $ignore_middlewares = ["Barryvdh\Debugbar\Middleware\DebugbarEnabled"];
     protected $authenticated_middlewares = ["auth", "admin", "verified"];
@@ -38,39 +30,12 @@ class BaseTrackerService extends BaseService
     public function preRequest(Request $request)
     {
         $this->request = $request;
-        $this->server = $request->server();
+        $this->server = $this->filterServerData($request->server());
         $this->headers = $request->headers->all();
         $this->request_time = now();
         $this->ip_address = $request->ip();
         return $this;
     }
-
-    public function mapUserData($user)
-    {
-        $fields = $this->user_fields;
-        if (count($fields) == 0) {
-            return null;
-        }
-
-        $data = [];
-        foreach ($fields as $key => $value) {
-            $data[$key] = $user->$value;
-        }
-        return $data;
-    }
-
-    public function setUserFields(array $data)
-    {
-        $this->user_fields = $data;
-        return $this;
-    }
-
-    public function setExtraData(array $data)
-    {
-        $this->extra_data = $data;
-        return $this;
-    }
-
 
     public function setIgnoreRoutes(array $data)
     {

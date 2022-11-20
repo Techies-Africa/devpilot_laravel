@@ -9,9 +9,16 @@ class UrlConstants
         return config("devpilot.base_url") . $relative_endpoint;
     }
 
+    // Activity tracking
     static function logActivity(): string
     {
         return self::get("/workspace/app/activity-tracker/visits/log");
+    }
+
+    // Error tracking
+    static function logError(): string
+    {
+        return self::get("/workspace/app/error-tracker/log");
     }
 
     // Deployment

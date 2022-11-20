@@ -4,9 +4,8 @@ namespace TechiesAfrica\Devpilot\Services\ActivityTracker;
 
 use Illuminate\Http\Request;
 use TechiesAfrica\Devpilot\Constants\UrlConstants;
-use TechiesAfrica\Devpilot\Services\General\Guzzle\GuzzleService;
 
-class TrackerService extends BaseTrackerService
+class ActivityTrackerService extends BaseTrackerService
 {
 
     public static function tracker(): self
@@ -61,16 +60,15 @@ class TrackerService extends BaseTrackerService
             "app_secret" => $this->app_secret,
             "request_time" => $this->request_time,
             "response_time" => $this->response_time,
+            "callback_url" => config("devpilot.activity_tracker_callback_url"),
             "payload" => [
                 "ip_address" => $this->ip_address,
                 "server" => $this->server,
                 "middlewares" => implode(",", $this->request->route()->action["middleware"] ?? []),
                 "route" => $this->route,
                 "user" => $this->user,
-                "extra_data" => $this->extra_data
+                "meta_data" => $this->meta_data
             ],
-            "success_callback_url" => null,
-            "error_callback_url" => null,
         ];
     }
 
@@ -84,9 +82,9 @@ class TrackerService extends BaseTrackerService
         $url = UrlConstants::logActivity();
         $data = $this->build();
 
-        $process = $this->guzzle->post($url , $data);
+        $process = $this->guzzle->post($url, $data);
         $this->guzzle->validateResponse($process);
-        $this->logResponse($process["message"] , $process["data"] ?? []);
+        $this->logResponse($process["message"], $process["data"] ?? []);
         $this->response_data = $process;
         return $this;
     }

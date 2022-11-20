@@ -4,7 +4,7 @@ namespace TechiesAfrica\Devpilot\Traits\Commands;
 
 use TechiesAfrica\Devpilot\Constants\UrlConstants;
 use TechiesAfrica\Devpilot\Exceptions\General\ServerErrorException;
-use TechiesAfrica\Devpilot\Services\ActivityTracker\TrackerService;
+use TechiesAfrica\Devpilot\Services\ActivityTracker\ActivityTrackerService;
 use TechiesAfrica\Devpilot\Services\General\Guzzle\GuzzleService;
 use TechiesAfrica\Devpilot\Traits\Commands\Errors\ErrorHandlerTrait;
 
@@ -25,13 +25,13 @@ trait ActivityTrackerTrait
 
     public function test()
     {
-        $tracker = new TrackerService;
+        $tracker = new ActivityTrackerService;
         if (!$tracker->canPush()) {
             throw new ServerErrorException("Cannot push data to server. Kindly check that all configurations are set properly!");
         }
         $payload = $this->buildPayload();
-        $guzzle = new GuzzleService(UrlConstants::logActivity());
-        $process = $guzzle->post($payload);
+        $guzzle = new GuzzleService();
+        $process = $guzzle->post(UrlConstants::logActivity() , $payload);
         $guzzle->validateResponse($process);
         if ($process["status"] != 200) {
             $this->handleErrors($process);
@@ -153,7 +153,7 @@ trait ActivityTrackerTrait
                     "page_type" => "Unauthenticated",
                 ],
                 "user" => null,
-                "extra_data" => null,
+                "meta_data" => null,
                 "is_test" => 1,
             ]
 
