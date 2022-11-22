@@ -19,10 +19,11 @@ class BaseTrackerService extends BaseService
     protected bool $enable_error_tracker_logging = false;
     protected $route = [];
     protected array $response_data;
-    protected string $severity = null;
+    protected string $severity;
     protected array $tags = [];
     protected array $custom_tabs = [];
     protected Recorder $breadcrub_recorder;
+    protected array $backtrace;
 
 
     public function __construct()
@@ -110,25 +111,6 @@ class BaseTrackerService extends BaseService
         return $this->breadcrub_recorder->getBreadcrumbs();
     }
 
-    /**
-     * Get the hostname of the computer.
-     *
-     * @return string|null
-     */
-    protected function getHostname()
-    {
-        $disabled = explode(',', ini_get('disable_functions'));
-
-        if (function_exists('php_uname') && !in_array('php_uname', $disabled, true)) {
-            return php_uname('n');
-        }
-
-        if (function_exists('gethostname') && !in_array('gethostname', $disabled, true)) {
-            return gethostname();
-        }
-
-        return null;
-    }
 
     /**
      * Set the error severity.
@@ -167,7 +149,7 @@ class BaseTrackerService extends BaseService
      */
     protected function isUnhandled(): bool
     {
-        $processor = new BacktraceProcessor($this->exception->getTrace());
+        $processor = new BacktraceProcessor($this->backtrace);
         return $processor->isUnhandled();
     }
 

@@ -71,17 +71,6 @@ class NullRequest implements RequestInterface
      */
     public function toArray(): array
     {
-        return [
-            "type" => null,
-            "url" => null,
-            "query" => null,
-            "cookies" => null,
-            "body" => null,
-            "headers" =>  null,
-            "cookies" => null,
-            "meta_data" => null,
-            "command" => null,
-            "attachments" => null,
-        ];
+        return [];
     }
 }

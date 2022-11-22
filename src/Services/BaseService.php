@@ -112,4 +112,25 @@ class BaseService
     {
         return $this->encrypt($this->app_key . "|" . time());
     }
+
+    /**
+     * Get the hostname of the computer.
+     *
+     * @return string|null
+     */
+    protected function getHostname()
+    {
+        $disabled = explode(',', ini_get('disable_functions'));
+
+        if (function_exists('php_uname') && !in_array('php_uname', $disabled, true)) {
+            return php_uname('n');
+        }
+
+        if (function_exists('gethostname') && !in_array('gethostname', $disabled, true)) {
+            return gethostname();
+        }
+
+        return null;
+    }
+
 }

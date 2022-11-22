@@ -183,17 +183,16 @@ class PhpRequest implements RequestInterface
     public function toArray(): array
     {
         $request = request();
+        $headers = $this->headers;
+        unset($headers["Cookie"]);
         return [
             "type" => "request",
             "url" => $request->url(),
+            "method" => $request->getMethod(),
             "query" => $request->query(),
-            "cookies" => $request->cookie(),
             "body" => $request->post(),
-            "headers" =>  $request->headers->all(),
+            "headers" =>  $headers,
             "cookies" => $this->getCookies(),
-            "meta_data" => $this->getMetaData(),
-            "command" => $this->getContext(),
-            "attachments" => []
         ];
     }
 }

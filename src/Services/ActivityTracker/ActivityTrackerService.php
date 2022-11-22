@@ -38,7 +38,7 @@ class ActivityTrackerService extends BaseTrackerService
             return $this;
         }
 
-        $this->user = empty($user) ? null : $this->mapUserData($user);
+        $this->user = empty($user) ? [] : $this->mapUserData($user);
         $this->route = [
             "action" => $action,
             "method" => $request->getMethod(),

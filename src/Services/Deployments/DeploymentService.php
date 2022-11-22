@@ -45,7 +45,7 @@ class DeploymentService extends BaseService
             "hooks" => $options["hooks"] ?? null,
             "commands" => $options["commands"] ?? null,
             "storage_paths" => $options["storage_paths"] ?? null,
-            "hostname" => self::tryOrNull("hostname"),
+            "hostname" => $this->getHostname(),
             "git_user" => self::tryOrNull("git config user.name"),
             "git_email" => self::tryOrNull("git config user.email"),
         ];

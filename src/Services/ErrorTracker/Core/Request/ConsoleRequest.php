@@ -83,7 +83,7 @@ class ConsoleRequest implements RequestInterface
             'options' => $options,
         ];
 
-        return ['console' => $data];
+        return $data;
     }
 
     /**
@@ -115,14 +115,8 @@ class ConsoleRequest implements RequestInterface
     {
         return [
             "type" => "console",
-            "url" => null,
-            "query" => null,
-            "body" => null,
-            "headers" => null,
-            "cookies" => $this->getCookies(),
             "meta_data" => $this->getMetaData(),
             "command" => $this->getContext(),
-            "attachments" => []
         ];
     }
 }

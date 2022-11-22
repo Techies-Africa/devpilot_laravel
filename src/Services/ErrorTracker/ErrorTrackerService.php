@@ -17,6 +17,7 @@ class ErrorTrackerService extends BaseTrackerService
         $this->resolver = new BasicResolver;
         $this->preRequest();
         $this->exception = $exception;
+        $this->backtrace = debug_backtrace();
         $this->postRequest();
     }
 
@@ -25,6 +26,7 @@ class ErrorTrackerService extends BaseTrackerService
     {
         $user = $this->request->user();
         $this->user = empty($user) ? [] : $this->mapUserData($user);
+        $this->setSeverity(ErrorTypes::getSeverity($this->exception->getCode()));
         return $this;
     }
 
@@ -44,6 +46,10 @@ class ErrorTrackerService extends BaseTrackerService
             "runtime_version" => app()->version(),
         ];
 
+
+
+        // dd($this->backtrace);
+
         return [
             "app_key" => $this->app_key,
             "app_secret" => $this->app_secret,
@@ -56,8 +62,7 @@ class ErrorTrackerService extends BaseTrackerService
                 "file" => $exception->getFile(),
                 "line" => $exception->getLine(),
                 "message" => $exception->getMessage(),
-                "trace_context" => $this->getStackTraceContexts(),
-                "stack_trace" => $exception->getTraceAsString(),
+                "stack_trace" => $this->getStackTraceContexts(),
                 "code" => $exception->getCode(),
                 "class_name" => get_class($exception),
                 "meta_data" => $this->getMetaData(),
@@ -65,7 +70,7 @@ class ErrorTrackerService extends BaseTrackerService
                 "breadcrumbs" => $this->getBreadcrumbs(),
                 "tags" => $this->getTags(),
                 "unhandled"  => $this->isUnhandled(),
-                "severity" => $this->getSeverity() ?? ErrorTypes::getSeverity($exception->getCode()),
+                "severity" => $this->getSeverity(),
                 "platform" => $platform_data,
                 "custom_tabs" => $this->getCustomTabs(),
             ],
@@ -85,12 +90,10 @@ class ErrorTrackerService extends BaseTrackerService
             }
             $url = UrlConstants::logError();
             $data = $this->build();
-            dd($data);
             $process = $this->guzzle->post($url, $data);
             $this->guzzle->validateResponse($process);
             $this->logResponse($process["message"], $process["data"] ?? []);
             $this->response_data = $process;
-            dd($process);
             return $this;
         } catch (\Throwable $th) {
             dd($th);
@@ -138,6 +141,7 @@ class ErrorTrackerService extends BaseTrackerService
                 "function" => $trace["function"] ?? null,
             ];
         }
-        return $contexts;
+        return base64_encode(json_encode($contexts));
+        // return $contexts;
     }
 }
