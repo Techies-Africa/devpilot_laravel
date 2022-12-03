@@ -2,6 +2,7 @@
 
 namespace TechiesAfrica\Devpilot\Services;
 
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use TechiesAfrica\Devpilot\Constants\GeneralConstants;
@@ -9,7 +10,7 @@ use TechiesAfrica\Devpilot\Services\General\Guzzle\GuzzleService;
 
 class BaseService
 {
-    protected GuzzleService $guzzle;
+    public GuzzleService $guzzle;
     protected Request $request;
     protected array $server = [];
     protected array $headers = [];
@@ -17,6 +18,7 @@ class BaseService
     protected string $ip_address = "";
     protected array $user = [];
     public array $user_fields = ["id" => "id", "name" => "name", "email" => "email"];
+    protected bool $verbose = false;
 
     public function __construct()
     {
@@ -56,6 +58,12 @@ class BaseService
     public function setUserFields(array $data)
     {
         $this->user_fields = $data;
+        return $this;
+    }
+
+    function verbose(bool $value = false)
+    {
+        $this->verbose = $value;
         return $this;
     }
 
@@ -131,6 +139,15 @@ class BaseService
         }
 
         return null;
+    }
+
+
+    protected function checkIfVerbose(Exception $exception , $return_value = null)
+    {
+        if($this->verbose){
+            throw $exception;
+        }
+        return $return_value;
     }
 
 }

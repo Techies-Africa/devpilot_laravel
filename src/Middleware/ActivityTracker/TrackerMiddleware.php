@@ -35,7 +35,7 @@ class TrackerMiddleware
         $tracker->setUserFields(["id" => "id", "name" => "full_name", "email" => "email"]);
 
         // Toggle logging as necessary, default is true unless otherwise stated in your .env
-        // $tracker->setShouldLog(false);
+        $tracker->setShouldLog(false);
 
         $tracker->preRequest($request);
 

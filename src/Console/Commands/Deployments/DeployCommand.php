@@ -12,7 +12,7 @@ class DeployCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'deploy';
+    protected $signature = 'deploy {--silent=true}';
 
     /**
      * The console command description.
@@ -44,6 +44,7 @@ class DeployCommand extends Command
     private function deploy()
     {
         $params = [
+            '--silent' => $this->option("silent"),
             '--branch' => config("devpilot.default_branch"),
             '--hooks' => "active",
         ];

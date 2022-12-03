@@ -3,13 +3,15 @@
 namespace TechiesAfrica\Devpilot\Services\ActivityTracker;
 
 use Illuminate\Http\Request;
+use TechiesAfrica\Devpilot\Exceptions\ActivityTracker\ActivityTrackerException;
 use TechiesAfrica\Devpilot\Services\BaseService;
 use Throwable;
 
 class BaseTrackerService extends BaseService
 {
+    protected bool $is_test = false;
     protected bool $can_log = true;
-    protected bool $should_log;
+    protected bool $should_log = true;
     protected bool $enable_activity_tracker_logging = false;
     protected $route = [];
     protected $request_time;
@@ -83,13 +85,22 @@ class BaseTrackerService extends BaseService
     public function canPush()
     {
         if (empty(config("devpilot.app_key")) || empty(config("devpilot.base_url"))) {
-            return false;
+            return $this->checkIfVerbose(
+                new ActivityTrackerException("Devpilot app keys or base url not configured properly."),
+                false
+            );
         }
-        if (!$this->should_log || !$this->can_log) {
-            return false;
+        if ((!$this->should_log || !$this->can_log)) {
+            return $this->checkIfVerbose(
+                new ActivityTrackerException("Devpilot activity tracking disabled."),
+                false
+            );
         }
         if ($this->isAjax()) {
-            return false;
+            return $this->checkIfVerbose(
+                new ActivityTrackerException("Devpilot activity tracking skipped ajax request."),
+                false
+            );
         }
         return true;
     }
@@ -102,7 +113,7 @@ class BaseTrackerService extends BaseService
     public function logResponse(string $message, array $data = []): void
     {
         if ($this->enable_activity_tracker_logging) {
-            $this->logger($message , $data , config("devpilot.activity_tracker_log"));
+            $this->logger($message, $data, config("devpilot.activity_tracker_log"));
         }
     }
 }

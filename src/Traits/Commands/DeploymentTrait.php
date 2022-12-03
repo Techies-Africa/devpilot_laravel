@@ -145,7 +145,7 @@ trait DeploymentTrait
                 //    $deployment["commit_url"],
                 $deployment["started_at"],
                 $deployment["ended_at"],
-                $deployment["duration"],
+                $this->getDuration($deployment["duration"], 2, "s"),
             ]);
         }
 
@@ -164,9 +164,14 @@ trait DeploymentTrait
 
         $i = 1;
         foreach ($deployment as $key => $value) {
+
+            $key = ucwords(str_replace("_", " ", $key));
+            if ($key == "Duration") {
+                $value = $this->getDuration($value, 2, "s");
+            }
             $table->addRow([
                 $i,
-                ucwords(str_replace("_", " ", $key)),
+                $key,
                 $value
             ]);
             $i++;
@@ -213,6 +218,7 @@ trait DeploymentTrait
         $hooks = $info["hooks"];
 
         $table = new Table($this->output);
+        $table->setHorizontal(false);
         $table->setHeaders([
             "#",
             "FIELD",
@@ -221,20 +227,29 @@ trait DeploymentTrait
 
         foreach ($hooks as $hook) {
             $i = 1;
-            $table->addRow([new TableCell('------- Hook Information Start --------', ['colspan' => 2])]);
-            $table->addRow(new TableSeparator(['colspan' => 2]));
+            $table->addRow(new TableSeparator(['colspan' => 3]));
             foreach ($hook as $key => $value) {
+                $key = ucwords(str_replace("_", " ", $key));
+                if (strlen($value) > 50) {
+                    $value = substr(trim($value), 0, 50) . "...";
+                }
+
+                if ($key == "Duration") {
+                    $value = $this->getDuration($value, 2, "s");
+                }
                 $table->addRow([
                     $i,
-                    ucwords(str_replace("_", " ", $key)),
+                    $key,
                     $value
                 ]);
                 $i++;
             }
-            $table->addRow(new TableSeparator(['colspan' => 2]));
-            $table->addRow([new TableCell('------- Hook Information End --------', ['colspan' => 2])]);
-            $table->addRow(new TableSeparator(['colspan' => 2]));
         }
         $table->render();
+    }
+
+    public function getDuration($ms, $decimal_places = 0, $suffix = null)
+    {
+        return number_format($ms / 1000, $decimal_places) . " " . $suffix;
     }
 }

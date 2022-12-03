@@ -2,7 +2,9 @@
 
 namespace TechiesAfrica\Devpilot\Providers;
 
+use App\Http\Middleware\Devpilot\ActivityTracker\TrackerMiddleware;
 use Illuminate\Console\Events\CommandStarting;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use TechiesAfrica\Devpilot\Console\Commands\ActivityTracker\StatusCommand;
@@ -12,6 +14,7 @@ use TechiesAfrica\Devpilot\Console\Commands\Deployments\FullDeployCommand;
 use TechiesAfrica\Devpilot\Console\Commands\General\InstallCommand;
 use TechiesAfrica\Devpilot\Console\Commands\Env\LoadCommand;
 use TechiesAfrica\Devpilot\Console\Commands\Env\SaveCommand;
+use TechiesAfrica\Devpilot\Console\Commands\General\UninstallCommand;
 use TechiesAfrica\Devpilot\Console\Commands\Server\ScriptCommand;
 use TechiesAfrica\Devpilot\Services\ActivityTracker\ActivityTrackerService;
 use TechiesAfrica\Devpilot\Services\General\Commands\CommandFilterService;
@@ -41,14 +44,15 @@ class DevpilotServiceProvider extends ServiceProvider
 
         $this->setupCommandFilter();
 
-        // $router = $this->app->make(Router::class);
-        // $router->aliasMiddleware('activity_tracker', TrackerMiddleware::class);
+        $router = $this->app->make(Router::class);
+        $router->aliasMiddleware('activity_tracker', TrackerMiddleware::class);
 
         if ($this->app->runningInConsole()) {
             $this->setupCommands();
         }
 
         $this->setupPublisher();
+        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
     }
 
     public function setupCommandFilter()
@@ -64,6 +68,7 @@ class DevpilotServiceProvider extends ServiceProvider
         $this->commands([
             // General
             InstallCommand::class,
+            UninstallCommand::class,
 
             // Deployments
             DeployCommand::class,

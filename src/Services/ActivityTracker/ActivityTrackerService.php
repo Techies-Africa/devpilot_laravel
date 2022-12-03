@@ -4,6 +4,7 @@ namespace TechiesAfrica\Devpilot\Services\ActivityTracker;
 
 use Illuminate\Http\Request;
 use TechiesAfrica\Devpilot\Constants\UrlConstants;
+use TechiesAfrica\Devpilot\Exceptions\ActivityTracker\ActivityTrackerException;
 
 class ActivityTrackerService extends BaseTrackerService
 {
@@ -25,7 +26,6 @@ class ActivityTrackerService extends BaseTrackerService
         }
 
         $is_ignored = RouteCheckService::checkIfRouteIsIgnored($request->route(), $this->ignore_routes);
-
         if ($is_ignored) {
             $this->can_log = false;
             return $this;
@@ -72,6 +72,11 @@ class ActivityTrackerService extends BaseTrackerService
         ];
     }
 
+    function isTest(bool $value = true)
+    {
+        $this->is_test = $value;
+        return $this;
+    }
 
     public function push()
     {
@@ -82,6 +87,10 @@ class ActivityTrackerService extends BaseTrackerService
         $url = UrlConstants::logActivity();
         $data = $this->build();
 
+        if ($this->is_test) {
+            $data["is_test"] = 1;
+        }
+        
         $process = $this->guzzle->post($url, $data);
         $this->guzzle->validateResponse($process);
         $this->logResponse($process["message"], $process["data"] ?? []);
