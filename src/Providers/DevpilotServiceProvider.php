@@ -16,7 +16,9 @@ use TechiesAfrica\Devpilot\Console\Commands\Env\LoadCommand;
 use TechiesAfrica\Devpilot\Console\Commands\Env\SaveCommand;
 use TechiesAfrica\Devpilot\Console\Commands\General\UninstallCommand;
 use TechiesAfrica\Devpilot\Console\Commands\Server\ScriptCommand;
+use TechiesAfrica\Devpilot\Facades\ErrorTracker;
 use TechiesAfrica\Devpilot\Services\ActivityTracker\ActivityTrackerService;
+use TechiesAfrica\Devpilot\Services\ErrorTracker\ErrorTrackerService;
 use TechiesAfrica\Devpilot\Services\General\Commands\CommandFilterService;
 
 class DevpilotServiceProvider extends ServiceProvider
@@ -28,9 +30,8 @@ class DevpilotServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(ActivityTrackerService::class, function ($app) {
-            return new ActivityTrackerService();
-        });
+        $this->registerSingletons();
+        $this->registerFacades();
     }
 
 
@@ -52,7 +53,25 @@ class DevpilotServiceProvider extends ServiceProvider
         }
 
         $this->setupPublisher();
-        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+        $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+    }
+
+
+
+
+
+    public function registerSingletons()
+    {
+        $this->app->singleton(ActivityTrackerService::class, function ($app) {
+            return new ActivityTrackerService();
+        });
+    }
+
+    public function registerFacades()
+    {
+        $this->app->bind(ErrorTracker::class, function () {
+            return new ErrorTrackerService();
+        });
     }
 
     public function setupCommandFilter()

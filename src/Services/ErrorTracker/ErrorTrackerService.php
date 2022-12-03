@@ -2,27 +2,25 @@
 
 namespace TechiesAfrica\Devpilot\Services\ErrorTracker;
 
-use Exception;
 use TechiesAfrica\Devpilot\Constants\UrlConstants;
 use TechiesAfrica\Devpilot\Services\ErrorTracker\Core\ErrorTypes;
 use TechiesAfrica\Devpilot\Services\ErrorTracker\Core\Request\BasicResolver;
+use Throwable;
 
 class ErrorTrackerService extends BaseTrackerService
 {
     protected BasicResolver $resolver;
 
-    public function __construct(Exception $exception)
+    protected function setException(Throwable $exception)
     {
-        parent::__construct();
-        $this->resolver = new BasicResolver;
         $this->preRequest();
         $this->exception = $exception;
         $this->backtrace = debug_backtrace();
         $this->postRequest();
+        return $this;
     }
 
-
-    public function postRequest()
+    private function postRequest()
     {
         $user = $this->request->user();
         $this->user = empty($user) ? [] : $this->mapUserData($user);
@@ -35,7 +33,7 @@ class ErrorTrackerService extends BaseTrackerService
      *
      * @return array
      */
-    public function build()
+    private function build()
     {
         $exception = $this->exception;
         $request_data = $this->resolver->resolve()->toArray();
@@ -45,10 +43,6 @@ class ErrorTrackerService extends BaseTrackerService
             "framework" => "Laravel",
             "runtime_version" => app()->version(),
         ];
-
-
-
-        // dd($this->backtrace);
 
         return [
             "app_key" => $this->app_key,
@@ -82,12 +76,14 @@ class ErrorTrackerService extends BaseTrackerService
      *
      * @return $this
      */
-    public function push()
+    public function notify(Throwable $exception)
     {
         try {
             if (!$this->canPush()) {
                 return null;
             }
+
+            $this->setException($exception);
             $url = UrlConstants::logError();
             $data = $this->build();
             $process = $this->guzzle->post($url, $data);
@@ -96,7 +92,8 @@ class ErrorTrackerService extends BaseTrackerService
             $this->response_data = $process;
             return $this;
         } catch (\Throwable $th) {
-            dd($th);
+            throw $th;
+            $this->logResponse($th->getMessage(), $th->getTrace());
         }
     }
 
@@ -105,9 +102,8 @@ class ErrorTrackerService extends BaseTrackerService
      *
      * @return array
      */
-    public function getStackTraceContexts()
+    private function getStackTraceContexts()
     {
-        // dd($this->exception->getFile());
         $traces = $this->exception->getTrace();
         $contexts = [];
         foreach ($traces as $trace) {

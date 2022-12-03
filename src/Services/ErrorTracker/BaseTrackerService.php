@@ -2,20 +2,21 @@
 
 namespace TechiesAfrica\Devpilot\Services\ErrorTracker;
 
-use Exception;
 use InvalidArgumentException;
 use TechiesAfrica\Devpilot\Constants\ErrorConstants;
+use TechiesAfrica\Devpilot\Exceptions\ErrorTracker\ErrorTrackerException;
 use TechiesAfrica\Devpilot\Services\BaseService;
 use TechiesAfrica\Devpilot\Services\ErrorTracker\Core\Breadcrumbs\Breadcrumb;
 use TechiesAfrica\Devpilot\Services\ErrorTracker\Core\Breadcrumbs\Recorder;
 use TechiesAfrica\Devpilot\Services\ErrorTracker\Core\BacktraceProcessor;
-
+use TechiesAfrica\Devpilot\Services\ErrorTracker\Core\Request\BasicResolver;
+use Throwable;
 
 class BaseTrackerService extends BaseService
 {
-    protected Exception $exception;
+    protected Throwable $exception;
     protected bool $can_log = true;
-    protected bool $should_log;
+    protected bool $should_log = true;
     protected bool $enable_error_tracker_logging = false;
     protected $route = [];
     protected array $response_data;
@@ -33,6 +34,7 @@ class BaseTrackerService extends BaseService
         parent::__construct();
         $this->level = "error";
         $this->breadcrub_recorder = new Recorder;
+        $this->resolver = new BasicResolver;
     }
 
     protected function preRequest()
@@ -47,11 +49,11 @@ class BaseTrackerService extends BaseService
     }
 
 
-    protected function setException(Exception $exception)
-    {
-        $this->exception = $exception;
-        return $this;
-    }
+    // protected function setException(Exception $exception)
+    // {
+    //     $this->exception = $exception;
+    //     return $this;
+    // }
 
     protected function setShouldLog(bool $value)
     {
@@ -69,10 +71,16 @@ class BaseTrackerService extends BaseService
     protected function canPush()
     {
         if (empty(config("devpilot.app_key")) || empty(config("devpilot.base_url"))) {
-            return false;
+            return $this->checkIfVerbose(
+                new ErrorTrackerException("Devpilot app keys or base url not configured properly."),
+                false
+            );
         }
         if (!$this->should_log || !$this->can_log) {
-            return false;
+            return $this->checkIfVerbose(
+                new ErrorTrackerException("Devpilot activity tracking disabled."),
+                false
+            );
         }
         return true;
     }
@@ -163,9 +171,10 @@ class BaseTrackerService extends BaseService
      *
      * @return void
      */
-    public function addMetaData(string $key, $value)
+    public function addMetaData(string $key,mixed $value)
     {
         $this->meta_data[$key] = $value;
+        return $this;
     }
 
     /**
@@ -188,9 +197,10 @@ class BaseTrackerService extends BaseService
      *
      * @return void
      */
-    public function removeMetaData($key)
+    public function removeMetaData(string $key)
     {
         unset($this->meta_data[$key]);
+        return $this;
     }
 
     /**
@@ -201,6 +211,7 @@ class BaseTrackerService extends BaseService
     public function clearMetaData()
     {
         $this->meta_data = [];
+        return $this;
     }
 
     /**
@@ -221,11 +232,12 @@ class BaseTrackerService extends BaseService
      *
      * @param string|null $value The value of the tag
      *
-     * @return void
+     * @return $this
      */
     public function addTag(string $key, string $value = null)
     {
         $this->tags[$key] = $value;
+        return $this;
     }
 
     /**
@@ -246,21 +258,23 @@ class BaseTrackerService extends BaseService
      *
      * @param string $key The key of the tag
      *
-     * @return void
+     * @return $this
      */
-    public function removeTag($key)
+    public function removeTag(string $key)
     {
         unset($this->tags[$key]);
+        return $this;
     }
 
     /**
      * Clear all tags for this error.
      *
-     * @return void
+     * @return $this
      */
     public function clearTags()
     {
         $this->tags = [];
+        return $this;
     }
 
     /**
@@ -292,6 +306,7 @@ class BaseTrackerService extends BaseService
             "key" => $key,
             "data" => $data
         ];
+        return $this;
     }
 
 
@@ -300,21 +315,23 @@ class BaseTrackerService extends BaseService
      *
      * @param string $key The key of the custom tab
      *
-     * @return void
+     * @return $this
      */
-    public function removeCustomTab($key)
+    public function removeCustomTab(string $key)
     {
         unset($this->custom_tabs[$key]);
+        return $this;
     }
 
     /**
      * Clear all custom tabs for this error.
      *
-     * @return void
+     * @return $this
      */
     public function clearCustomTabs()
     {
         $this->custom_tabs = [];
+        return $this;
     }
 
     /**
