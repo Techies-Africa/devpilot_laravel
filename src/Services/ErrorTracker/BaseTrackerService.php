@@ -40,7 +40,6 @@ class BaseTrackerService extends BaseService
     protected function preRequest()
     {
         $request = request();
-        // dd($request);
         $this->request = $request;
         $this->server = $this->filterServerData($request->server());
         $this->headers = $request->headers->all();
@@ -93,30 +92,51 @@ class BaseTrackerService extends BaseService
     protected function logResponse(string $message, array $data = []): void
     {
         if ($this->enable_error_tracker_logging) {
-            $this->logger($message, $data, config("devpilot.enable_error_tracker_logging"));
+            $this->logger($message, $data, config("devpilot.error_tracker_log_channel"));
         }
     }
 
 
-    public function addBreadcrumb($name, $type = null, array $meta_data = [])
+    /**
+     * Add new  breadcrumb
+     *
+     * @param string $name the name of the breadcrumb
+     * @param string|null $type the type of breadcrumb
+     * @param array $meta_data extra data for the breadcrumb
+     *
+     * @return $this
+     */
+    public function addBreadcrumb(string $name,string $type = null, array $meta_data = [])
     {
         $type = in_array($type, Breadcrumb::getTypes(), true) ? $type : Breadcrumb::MANUAL_TYPE;
         $this->breadcrub_recorder->add(new Breadcrumb($name, $type, $meta_data));
+        return $this;
     }
 
-    protected function clearBreadcrumbs(): void
+
+     /**
+     * Remove all saved breadcrumbs for the error
+     *
+     * @return $this
+     */
+    protected function clearBreadcrumbs()
     {
         $this->breadcrub_recorder->clear();
+        return $this;
     }
 
     /**
      * Get the breadcrumbs of the error.
      *
-     * @return \TechiesAfrica\Devpilot\Services\ErrorTracker\Core\Breadcrumbs\Breadcrumb[]
+     * @return array
      */
     protected function getBreadcrumbs()
     {
-        return $this->breadcrub_recorder->getBreadcrumbs();
+        $breadcrumbs = $this->breadcrub_recorder->getBreadcrumbs();
+        foreach ($breadcrumbs as $key => $value) {
+            $breadcrumbs[$key] = $value->toArray();
+        }
+        return $breadcrumbs;
     }
 
 
@@ -295,11 +315,11 @@ class BaseTrackerService extends BaseService
      *
      * @param string $key The title of the custom tab
      *
-     * @param string|null $value The data for the custom tab
+     * @param array|null $value The data for the custom tab
      *
      * @return void
      */
-    public function addCustomTab(string $key, string $title,  array $data)
+    public function addCustomTab(string $key, string $title,  array $data = null)
     {
         $this->custom_tabs[$key] = [
             "title" => $title,

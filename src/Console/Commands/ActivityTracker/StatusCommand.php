@@ -15,7 +15,7 @@ class StatusCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'devpilot:tracker:status';
+    protected $signature = 'devpilot:activity_tracker:status';
 
     /**
      * The console command description.

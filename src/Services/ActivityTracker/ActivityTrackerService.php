@@ -19,14 +19,15 @@ class ActivityTrackerService extends BaseTrackerService
         $this->request = $request;
         $user = $request->user();
         $action = optional($request->route())->action;
-
         if (empty($action)) {
+            $this->checkIfVerbose(new ActivityTrackerException("No route action found."));
             $this->can_log = false;
             return $this;
         }
 
         $is_ignored = RouteCheckService::checkIfRouteIsIgnored($request->route(), $this->ignore_routes);
         if ($is_ignored) {
+            $this->checkIfVerbose(new ActivityTrackerException("No route action found."));
             $this->can_log = false;
             return $this;
         }
@@ -34,12 +35,14 @@ class ActivityTrackerService extends BaseTrackerService
         $is_ignored = RouteCheckService::checkIfMiddlewareIsIgnored($request->route(), $this->ignore_middlewares);
 
         if ($is_ignored) {
+            $this->checkIfVerbose(new ActivityTrackerException("No route action found."));
             $this->can_log = false;
             return $this;
         }
 
         $this->user = empty($user) ? [] : $this->mapUserData($user);
         $this->route = [
+            "url" => $request->fullUrl(),
             "action" => $action,
             "method" => $request->getMethod(),
             "referrer" => $request->headers->get('referer'),
@@ -90,11 +93,14 @@ class ActivityTrackerService extends BaseTrackerService
         if ($this->is_test) {
             $data["is_test"] = 1;
         }
-        
+
         $process = $this->guzzle->post($url, $data);
         $this->guzzle->validateResponse($process);
         $this->logResponse($process["message"], $process["data"] ?? []);
-        $this->response_data = $process;
+        if (!empty($data = $process)) {
+            $this->setResponseData($data);
+        }
+        $this->onResponse();
         return $this;
     }
 }

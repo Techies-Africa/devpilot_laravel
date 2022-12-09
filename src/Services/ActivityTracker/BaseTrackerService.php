@@ -2,6 +2,7 @@
 
 namespace TechiesAfrica\Devpilot\Services\ActivityTracker;
 
+use Closure;
 use Illuminate\Http\Request;
 use TechiesAfrica\Devpilot\Exceptions\ActivityTracker\ActivityTrackerException;
 use TechiesAfrica\Devpilot\Services\BaseService;
@@ -19,7 +20,8 @@ class BaseTrackerService extends BaseService
     protected $ignore_routes = [];
     protected $ignore_middlewares = ["Barryvdh\Debugbar\Middleware\DebugbarEnabled"];
     protected $authenticated_middlewares = ["auth", "admin", "verified"];
-    public $response_data;
+    protected $response_data = null;
+    protected $response_callback;
 
 
     public function __construct()
@@ -70,6 +72,13 @@ class BaseTrackerService extends BaseService
     }
 
 
+    public function setResponseData(array $data = null)
+    {
+        $this->response_data = $data;
+        return $this;
+    }
+
+
     public function isAjax()
     {
         try {
@@ -113,7 +122,19 @@ class BaseTrackerService extends BaseService
     public function logResponse(string $message, array $data = []): void
     {
         if ($this->enable_activity_tracker_logging) {
-            $this->logger($message, $data, config("devpilot.activity_tracker_log"));
+            $this->logger($message, $data, config("devpilot.activity_tracker_log_channel"));
         }
     }
+
+    public function setResponseCallback(Closure $callback)
+    {
+        $this->response_callback = $callback;
+        return $this;
+    }
+
+    public function onResponse(): void
+    {
+        array_map($this->response_callback, [$this->response_data]);
+    }
 }
+

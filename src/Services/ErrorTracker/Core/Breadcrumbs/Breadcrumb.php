@@ -2,7 +2,7 @@
 
 namespace TechiesAfrica\Devpilot\Services\ErrorTracker\Core\Breadcrumbs;
 
-use TechiesAfrica\Devpilot\Services\ErrorTracker\Core\DateTime\Date;
+use Exception;
 use InvalidArgumentException;
 
 class Breadcrumb
@@ -127,10 +127,10 @@ class Breadcrumb
         $types = static::getTypes();
 
         if (!in_array($type, $types, true)) {
-            throw new InvalidArgumentException(sprintf('The breadcrumb type must be one of the set of %d standard types.', count($types)));
+            throw new Exception(sprintf('The breadcrumb type must be one of the set of %d standard types.', count($types)));
         }
 
-        $this->timestamp = Date::now();
+        $this->timestamp = now();
         $this->name = $name;
         $this->type = $type;
         $this->meta_data = $meta_data;
@@ -149,6 +149,7 @@ class Breadcrumb
             'timestamp' => $this->timestamp,
             'name' => $this->name,
             'type' => $this->type,
+            'meta_data' => $this->meta_data
         ];
     }
 

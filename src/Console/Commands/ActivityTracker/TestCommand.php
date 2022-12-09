@@ -20,7 +20,7 @@ class TestCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'devpilot:tracker:test';
+    protected $signature = 'devpilot:activity_tracker:test';
 
     /**
      * The console command description.
@@ -55,6 +55,8 @@ class TestCommand extends Command
         } catch (ValidationException $e) {
             $this->displayValidatorErrors($e->errors);
         } catch (GuzzleException $e) {
+            $this->error($e->getMessage());
+        } catch (ActivityTrackerException $e) {
             $this->error($e->getMessage());
         } catch (ServerErrorException $e) {
             $this->warn($e->getMessage());
