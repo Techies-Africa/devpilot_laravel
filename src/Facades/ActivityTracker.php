@@ -16,6 +16,10 @@ use Illuminate\Support\Facades\Facade;
  * @method static $this setUserFields(array $data) Set user fields map
  * @method static $this setMetadata(array $data) Add extra data to the activity record
  * @method static $this verbose(bool $value = false) Throw any internal errors.
+ * @method static $this preRequest(\Illuminate\Http\Request $request) Initialize incoming request.
+ * @method static $this postRequest(\Illuminate\Http\Request $request) Re-initialize request just before returning response
+ * @method static $this push() Send data to devpilot
+ * @method static void log(string $message, array $data = []) Log data in the configured log channel for activity tracker
  *
  */
 class ActivityTracker extends Facade

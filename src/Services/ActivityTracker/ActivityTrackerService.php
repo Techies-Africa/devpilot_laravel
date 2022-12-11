@@ -8,7 +8,7 @@ use TechiesAfrica\Devpilot\Exceptions\ActivityTracker\ActivityTrackerException;
 
 class ActivityTrackerService extends BaseTrackerService
 {
-    public static function tracker(): self
+    public static function init(): self
     {
         return app(self::class);
     }

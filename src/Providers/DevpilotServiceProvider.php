@@ -74,7 +74,7 @@ class DevpilotServiceProvider extends ServiceProvider
             return new ErrorTrackerService();
         });
         $this->app->bind(ActivityTracker::class, function () {
-            return new ActivityTracker();
+            return ActivityTrackerService::init();
         });
     }
 

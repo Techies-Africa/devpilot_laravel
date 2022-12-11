@@ -5,7 +5,7 @@ namespace App\Http\Middleware\Devpilot\ActivityTracker;
 
 use Closure;
 use Illuminate\Http\Request;
-use TechiesAfrica\Devpilot\Services\ActivityTracker\ActivityTrackerService;
+use TechiesAfrica\Devpilot\Facades\ActivityTracker;
 
 class TrackerMiddleware
 {
@@ -18,30 +18,30 @@ class TrackerMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        $tracker = ActivityTrackerService::tracker();
+        $tracker = new ActivityTracker;
 
         // Ignore routes you don`t want to track
-        // $tracker->setIgnoreRoutes([
-        //     "web.read_file"
-        // ]);
+        $tracker->setIgnoreRoutes([
+            "web.read_file"
+        ]);
 
         // Ignore middlewares you don`t want to track
-        // $tracker->setIgnoreMiddlewares(["Barryvdh\Debugbar\Middleware\DebugbarEnabled"]);
+        $tracker->setIgnoreMiddlewares(["Barryvdh\Debugbar\Middleware\DebugbarEnabled"]);
 
         // Set middlewares used to identify authenticated users
-        // $tracker->setAuthenticatedMiddlewares(["auth" , "admin" , "verified"]);
+        $tracker->setAuthenticatedMiddlewares(["auth" , "admin" , "verified"]);
 
         // Set values for authenticated user mapping based of columns in the users table
         $tracker->setUserFields(["id" => "id", "name" => "full_name", "email" => "email"]);
 
-        // Toggle logging as necessary, default is true unless otherwise stated in your .env
+        // Toggle logging as necessary, default is true unless otherwise stated in your config
         $tracker->setShouldLog(false);
 
         $tracker->preRequest($request);
 
         $response =  $next($request);
 
-        // ActivityTrackerService::log("pushing data");
+        // ActivityTracker::log("pushing data");
 
         $tracker->postRequest($request)->push();
 
