@@ -59,7 +59,7 @@ class ErrorTrackerService extends BaseTrackerService
                 "ip_address" => $this->ip_address,
                 "server" => $this->server,
                 "user" => $this->user,
-                "file" => $exception->getFile(),
+                "file" => $this->projectPath($exception->getFile()),
                 "line" => $exception->getLine(),
                 "message" => $exception->getMessage(),
                 "stack_trace" => $this->getStackTraceContexts(),
@@ -151,10 +151,12 @@ class ErrorTrackerService extends BaseTrackerService
         // return $contexts;
     }
 
+
     private function stripPath($file_path)
     {
         return str_replace($this->getErrorTrackerStripPath(), "", $file_path);
     }
+
 
     private function projectPath($file_path)
     {

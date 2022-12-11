@@ -16,6 +16,7 @@ use TechiesAfrica\Devpilot\Console\Commands\Env\LoadCommand;
 use TechiesAfrica\Devpilot\Console\Commands\Env\SaveCommand;
 use TechiesAfrica\Devpilot\Console\Commands\General\UninstallCommand;
 use TechiesAfrica\Devpilot\Console\Commands\Server\ScriptCommand;
+use TechiesAfrica\Devpilot\Facades\ActivityTracker;
 use TechiesAfrica\Devpilot\Facades\ErrorTracker;
 use TechiesAfrica\Devpilot\Services\ActivityTracker\ActivityTrackerService;
 use TechiesAfrica\Devpilot\Services\ErrorTracker\ErrorTrackerService;
@@ -71,6 +72,9 @@ class DevpilotServiceProvider extends ServiceProvider
     {
         $this->app->bind(ErrorTracker::class, function () {
             return new ErrorTrackerService();
+        });
+        $this->app->bind(ActivityTracker::class, function () {
+            return new ActivityTracker();
         });
     }
 

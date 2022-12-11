@@ -65,13 +65,13 @@ return [
     // ERROR TRACKER SPIECIFIC CONFIGURATIONS
     "error_tracker" => [
         "enable" => env("DEVPILOT_ENABLE_ERROR_TRACKER", true),
-        "project_path" => app_path(),
+        "project_path" => base_path(),
         "strip_path" => base_path(),
         "enable_logging" => false,
         "log_channel" => env("DEVPILOT_LOG_CHANNEL", env("LOG_CHANNEL", "stack")),
         "callback_url" => null,
         "ignored_classes" => [],
-        "send_code" => true,
+        "send_code" => false,
         "metadata_filters" => [
             "access_token", // case-insensitive: "access_token", "ACCESS_TOKEN", "AcCeSs_ToKeN"
             "/^cc_/",        // prefix match: "cc_number" "cc_cvv" "cc_expiry"
