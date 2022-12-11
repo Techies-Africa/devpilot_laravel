@@ -7,12 +7,11 @@ use TechiesAfrica\Devpilot\Services\BaseService;
 
 class DeploymentService extends BaseService
 {
-
     protected bool $enable_deployment_logging = false;
 
     public function __construct()
     {
-        $this->setEnableLogging(config("devpilot.enable_deployment_logging", false));
+        $this->setEnableLogging($this->isDeploymentLoggingEnabled());
         parent::__construct();
     }
 
@@ -30,7 +29,7 @@ class DeploymentService extends BaseService
     public function logResponse(string $message, array $data = []): void
     {
         if ($this->enable_deployment_logging) {
-            $this->logger($message, $data, config("devpilot.deployment_log"));
+            $this->logger($message, $data, $this->getDeploymentLogChannel());
         }
     }
 
@@ -77,5 +76,4 @@ class DeploymentService extends BaseService
             return null;
         }
     }
-
 }

@@ -58,7 +58,7 @@ class ConsoleRequest implements RequestInterface
      *
      * @return array
      */
-    public function getMetaData()
+    public function getMetadata()
     {
         if (count($this->command) == 0) {
             return ['console' => [
@@ -115,7 +115,7 @@ class ConsoleRequest implements RequestInterface
     {
         return [
             "type" => "console",
-            "meta_data" => $this->getMetaData(),
+            "metadata" => $this->getMetadata(),
             "command" => $this->getContext(),
         ];
     }

@@ -2,11 +2,14 @@
 
 namespace TechiesAfrica\Devpilot\Constants;
 
+use TechiesAfrica\Devpilot\Traits\General\ConfigurationTrait;
+
 class UrlConstants
 {
+    use ConfigurationTrait;
     public static function get($relative_endpoint): string
     {
-        return config("devpilot.base_url") . $relative_endpoint;
+        return (new UrlConstants)->getGeneralBaseUrl() . $relative_endpoint;
     }
 
     // Activity tracking
@@ -51,5 +54,4 @@ class UrlConstants
     {
         return self::get("/server/execute");
     }
-
 }

@@ -4,9 +4,11 @@ namespace TechiesAfrica\Devpilot\Console\Commands\Deployments;
 
 use Illuminate\Console\Command;
 use TechiesAfrica\Devpilot\Services\Deployments\DeploymentService;
+use TechiesAfrica\Devpilot\Traits\General\ConfigurationTrait;
 
 class DeployCommand extends Command
 {
+    use ConfigurationTrait;
     /**
      * The name and signature of the console command.
      *
@@ -45,7 +47,7 @@ class DeployCommand extends Command
     {
         $params = [
             '--silent' => $this->option("silent"),
-            '--branch' => config("devpilot.default_branch"),
+            '--branch' => $this->getDeploymentDefaultBranch(),
             '--hooks' => "active",
         ];
         $this->call('devpilot:deploy', $params);

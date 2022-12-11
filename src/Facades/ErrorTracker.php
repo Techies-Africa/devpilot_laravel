@@ -9,11 +9,11 @@ use Illuminate\Support\Facades\Facade;
  * @method static $this setSeverity(string $severity)
  * @method static string getSeverity()
  * @method static bool isUnhandled()
- * @method static $this addMetaData(string $key,string|array $value)
- * @method static $this setMetaData(array $data)
- * @method static $this removeMetaData(string $key)
- * @method static $this clearMetaData()
- * @method static array getMetaData()
+ * @method static $this addMetadata(string $key,string|array $value)
+ * @method static $this setMetadata(array $data)
+ * @method static $this removeMetadata(string $key)
+ * @method static $this clearMetadata()
+ * @method static array getMetadata()
  * @method static $this addTag(string $key, string|null $value = null)
  * @method static $this setTags(array $data)
  * @method static $this removeTag(string $key)
@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static $this removeCustomTab(string $key)
  * @method static $this clearCustomTabs()
  * @method static array getCustomTabs()
- * @method static $this addBreadcrumb(string $name,string|null $type = null, array|null $meta_data = []) Add new breacrumb to error
+ * @method static $this addBreadcrumb(string $name,string|null $type = null, array|null $metadata = []) Add new breacrumb to error
  * @method static $this clearBreadcrumbs() Remove all saved breadcrumbs for the error
  * @method static $this getBreadcrumbs() Get the breadcrumbs of the error.
  *

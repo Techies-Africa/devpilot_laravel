@@ -6,10 +6,11 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Helper\Table;
 use TechiesAfrica\Devpilot\Services\ActivityTracker\ActivityTrackerService;
 use TechiesAfrica\Devpilot\Traits\Commands\LayoutTrait;
+use TechiesAfrica\Devpilot\Traits\General\ConfigurationTrait;
 
 class StatusCommand extends Command
 {
-    use LayoutTrait;
+    use LayoutTrait , ConfigurationTrait;
     /**
      * The name and signature of the console command.
      *
@@ -51,10 +52,10 @@ class StatusCommand extends Command
         ]);
 
         $table->setRows([
-            [1 , "User Access Token Check" , !empty(config("devpilot.user_access_token")) ? "Passed" : "Failed. Kindly set it in your env."],
-            [2 , "App Key Check" , !empty(config("devpilot.app_key")) ? "Passed" : "Failed. Kindly set it in your env."],
-            [3 , "App Secret Check" , !empty(config("devpilot.app_secret")) ? "Passed" : "Failed. Kindly set it in your env."],
-            [4 , "Logging Enabled Check" , config("devpilot.enable_activity_tracking") ? "true" : "false"],
+            [1 , "User Access Token Check" , !empty($this->getAuthenticationUserAccessToken()) ? "Passed" : "Failed. Kindly set it in your env."],
+            [2 , "App Key Check" , !empty($this->getAuthenticationAppKey()) ? "Passed" : "Failed. Kindly set it in your env."],
+            [3 , "App Secret Check" , !empty($this->getAuthenticationAppSecret()) ? "Passed" : "Failed. Kindly set it in your env."],
+            [4 , "Logging Enabled Check" , $this->isActivityTrackerEnabled() ? "true" : "false"],
         ]);
 
         $table->render();

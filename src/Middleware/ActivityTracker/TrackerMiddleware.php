@@ -20,12 +20,12 @@ class TrackerMiddleware
     {
         $tracker = ActivityTrackerService::tracker();
 
-        // Ignore routes you dont`t want to track
+        // Ignore routes you don`t want to track
         // $tracker->setIgnoreRoutes([
         //     "web.read_file"
         // ]);
 
-        // Ignore middlewates you dont`t want to track
+        // Ignore middlewares you don`t want to track
         // $tracker->setIgnoreMiddlewares(["Barryvdh\Debugbar\Middleware\DebugbarEnabled"]);
 
         // Set middlewares used to identify authenticated users

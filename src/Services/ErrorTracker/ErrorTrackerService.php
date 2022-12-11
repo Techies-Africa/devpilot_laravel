@@ -35,20 +35,26 @@ class ErrorTrackerService extends BaseTrackerService
      */
     private function build()
     {
+
         $exception = $this->exception;
         $request_data = $this->resolver->resolve()->toArray();
         $platform_data = [
             "hostname" => $this->getHostname(),
             "language" => "PHP",
+            "language_version" => PHP_VERSION,
             "framework" => "Laravel",
-            "runtime_version" => app()->version(),
+            "framework_version" => app()->version(),
         ];
 
         return [
             "app_key" => $this->app_key,
             "app_secret" => $this->app_secret,
             "event_uuid" => $this->getEventUUID(),
-            "callback_url" => config("devpilot.error_tracker_callback_url"),
+            "callback_url" => $this->getErrorTrackerCallbackUrl(),
+            "configuration" => [
+                "project_path" => $this->getErrorTrackerProjectPath(),
+                "send_code" => $this->shouldErrorTrackerSendCode(),
+            ],
             "payload" => [
                 "ip_address" => $this->ip_address,
                 "server" => $this->server,
@@ -59,7 +65,7 @@ class ErrorTrackerService extends BaseTrackerService
                 "stack_trace" => $this->getStackTraceContexts(),
                 "code" => $exception->getCode(),
                 "class_name" => get_class($exception),
-                "meta_data" => $this->getMetaData(),
+                "metadata" => $this->getMetadata(),
                 "request" => $request_data,
                 "breadcrumbs" => $this->getBreadcrumbs(),
                 "tags" => $this->getTags(),
@@ -128,8 +134,12 @@ class ErrorTrackerService extends BaseTrackerService
                 }
             }
 
+            if(!$this->shouldErrorTrackerSendCode()){
+                $context = null;
+            }
+
             $contexts[] = [
-                "file" => $file_path,
+                "file" => $this->stripPath($file_path),
                 "line" => $line,
                 "context" => $context,
                 "class" => $trace["class"] ?? null,
@@ -139,5 +149,15 @@ class ErrorTrackerService extends BaseTrackerService
         }
         return base64_encode(json_encode($contexts));
         // return $contexts;
+    }
+
+    private function stripPath($file_path)
+    {
+        return str_replace($this->getErrorTrackerStripPath(), "", $file_path);
+    }
+
+    private function projectPath($file_path)
+    {
+        return str_replace($this->getErrorTrackerProjectPath(), "", $file_path);
     }
 }

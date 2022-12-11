@@ -94,7 +94,7 @@ class PhpRequest implements RequestInterface
      *
      * @return array
      */
-    public function getMetaData()
+    public function getMetadata()
     {
         $data = [];
 

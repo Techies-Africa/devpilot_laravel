@@ -3,9 +3,11 @@
 namespace TechiesAfrica\Devpilot\Tests\Feature\ActivityTracker;
 
 use TechiesAfrica\Devpilot\Tests\TestCase;
+use TechiesAfrica\Devpilot\Traits\General\ConfigurationTrait;
 
 class CommandTest extends TestCase
 {
+    use ConfigurationTrait;
     function test_status_command()
     {
         $this->artisan("devpilot:tracker:status")
@@ -14,10 +16,10 @@ class CommandTest extends TestCase
                 "FIELD",
                 "VALUE",
             ], [
-                [1, "User Access Token Check", !empty(config("devpilot.user_access_token")) ? "Passed" : "Failed. Kindly set it in your env."],
-                [2, "App Key Check", !empty(config("devpilot.app_key")) ? "Passed" : "Failed. Kindly set it in your env."],
-                [3, "App Secret Check", !empty(config("devpilot.app_secret")) ? "Passed" : "Failed. Kindly set it in your env."],
-                [4, "Logging Enabled Check", config("devpilot.enable_activity_tracking") ? "true" : "false"],
+                [1, "User Access Token Check", !empty($this->getAuthenticationUserAccessToken()) ? "Passed" : "Failed. Kindly set it in your env."],
+                [2, "App Key Check", !empty($this->getAuthenticationAppKey()) ? "Passed" : "Failed. Kindly set it in your env."],
+                [3, "App Secret Check", !empty($this->getAuthenticationAppSecret()) ? "Passed" : "Failed. Kindly set it in your env."],
+                [4, "Logging Enabled Check", $this->isActivityTrackerEnabled() ? "true" : "false"],
             ])
             ->expectsOutput("Activity Tracker status check completed....");
     }

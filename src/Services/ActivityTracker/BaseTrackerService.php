@@ -26,8 +26,11 @@ class BaseTrackerService extends BaseService
 
     public function __construct()
     {
-        $this->setShouldLog(config("devpilot.enable_activity_tracking", true));
-        $this->setEnableLogging(config("devpilot.enable_activity_tracker_logging", false));
+        $this->setShouldLog($this->isActivityTrackerEnabled());
+        $this->setEnableLogging($this->isActivityTrackerLoggingEnabled());
+        $this->setIgnoreRoutes($this->getActivityTrackerIgnoreRoutes() ?? []);
+        $this->setAuthenticatedMiddlewares($this->getActivityTrackerAuthenticatedMiddlewares() ?? []);
+        $this->setUserFields($this->getActivityTrackerUserFields() ?? []);
         parent::__construct();
     }
 
@@ -93,7 +96,7 @@ class BaseTrackerService extends BaseService
 
     public function canPush()
     {
-        if (empty(config("devpilot.app_key")) || empty(config("devpilot.base_url"))) {
+        if (empty($this->getAuthenticationAppKey()) || empty($this->getGeneralBaseUrl())) {
             return $this->checkIfVerbose(
                 new ActivityTrackerException("Devpilot app keys or base url not configured properly."),
                 false
@@ -122,7 +125,7 @@ class BaseTrackerService extends BaseService
     public function logResponse(string $message, array $data = []): void
     {
         if ($this->enable_activity_tracker_logging) {
-            $this->logger($message, $data, config("devpilot.activity_tracker_log_channel"));
+            $this->logger($message, $data, $this->getActivityTrackerLogChannel());
         }
     }
 

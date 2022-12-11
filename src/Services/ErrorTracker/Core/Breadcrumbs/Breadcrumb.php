@@ -96,31 +96,31 @@ class Breadcrumb
      *
      * @var array
      */
-    protected $meta_data;
+    protected $metadata;
 
     /**
      * Create a new breadcrumb instance.
      *
      * @param string $name     the name of the breadcrumb
      * @param string $type     the type of breadcrumb
-     * @param array  $meta_data additional information about the breadcrumb
+     * @param array  $metadata additional information about the breadcrumb
      *
      * @throws \InvalidArgumentException
      *
      * @return void
      */
-    public function __construct($name, $type, array $meta_data = [])
+    public function __construct($name, $type, array $metadata = [])
     {
         if (!is_string($name)) {
             if (is_null($name)) {
-                $meta_data['BreadcrumbError'] = 'NULL provided as the breadcrumb name';
+                $metadata['BreadcrumbError'] = 'NULL provided as the breadcrumb name';
                 $name = '<no name>';
             } else {
-                $meta_data['BreadcrumbError'] = 'Breadcrumb name must be a string - '.gettype($name).' provided instead';
+                $metadata['BreadcrumbError'] = 'Breadcrumb name must be a string - '.gettype($name).' provided instead';
                 $name = '<no name>';
             }
         } elseif ($name === '') {
-            $meta_data['BreadcrumbError'] = 'Empty string provided as the breadcrumb name';
+            $metadata['BreadcrumbError'] = 'Empty string provided as the breadcrumb name';
             $name = '<no name>';
         }
 
@@ -133,7 +133,7 @@ class Breadcrumb
         $this->timestamp = now();
         $this->name = $name;
         $this->type = $type;
-        $this->meta_data = $meta_data;
+        $this->metadata = $metadata;
     }
 
     /**
@@ -149,7 +149,7 @@ class Breadcrumb
             'timestamp' => $this->timestamp,
             'name' => $this->name,
             'type' => $this->type,
-            'meta_data' => $this->meta_data
+            'metadata' => $this->metadata
         ];
     }
 
@@ -160,9 +160,9 @@ class Breadcrumb
      *
      * @return array
      */
-    public function getMetaData()
+    public function getMetadata()
     {
-        return $this->meta_data;
+        return $this->metadata;
     }
 
     /**

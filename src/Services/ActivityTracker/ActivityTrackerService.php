@@ -8,7 +8,6 @@ use TechiesAfrica\Devpilot\Exceptions\ActivityTracker\ActivityTrackerException;
 
 class ActivityTrackerService extends BaseTrackerService
 {
-
     public static function tracker(): self
     {
         return app(self::class);
@@ -63,14 +62,14 @@ class ActivityTrackerService extends BaseTrackerService
             "app_secret" => $this->app_secret,
             "request_time" => $this->request_time,
             "response_time" => $this->response_time,
-            "callback_url" => config("devpilot.activity_tracker_callback_url"),
+            "callback_url" => $this->getActivityTrackerCallbackUrl(),
             "payload" => [
                 "ip_address" => $this->ip_address,
                 "server" => $this->server,
                 "middlewares" => implode(",", $this->request->route()->action["middleware"] ?? []),
                 "route" => $this->route,
                 "user" => $this->user,
-                "meta_data" => $this->meta_data
+                "metadata" => $this->metadata
             ],
         ];
     }

@@ -39,7 +39,7 @@ class NullRequest implements RequestInterface
      *
      * @return array
      */
-    public function getMetaData()
+    public function getMetadata()
     {
         return [];
     }

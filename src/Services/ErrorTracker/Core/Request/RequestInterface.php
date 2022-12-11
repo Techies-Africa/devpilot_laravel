@@ -30,7 +30,7 @@ interface RequestInterface
      *
      * @return array
      */
-    public function getMetaData();
+    public function getMetadata();
 
     /**
      * Get the request context.

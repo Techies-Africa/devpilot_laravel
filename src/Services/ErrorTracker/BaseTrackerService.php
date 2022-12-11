@@ -10,10 +10,12 @@ use TechiesAfrica\Devpilot\Services\ErrorTracker\Core\Breadcrumbs\Breadcrumb;
 use TechiesAfrica\Devpilot\Services\ErrorTracker\Core\Breadcrumbs\Recorder;
 use TechiesAfrica\Devpilot\Services\ErrorTracker\Core\BacktraceProcessor;
 use TechiesAfrica\Devpilot\Services\ErrorTracker\Core\Request\BasicResolver;
+use TechiesAfrica\Devpilot\Traits\General\ErrorTrackerTrait;
 use Throwable;
 
 class BaseTrackerService extends BaseService
 {
+    use ErrorTrackerTrait;
     protected Throwable $exception;
     protected bool $can_log = true;
     protected bool $should_log = true;
@@ -29,8 +31,8 @@ class BaseTrackerService extends BaseService
 
     public function __construct()
     {
-        $this->setShouldLog(config("devpilot.enable_error_tracking", true));
-        $this->setEnableLogging(config("devpilot.enable_error_tracker_logging", false));
+        $this->setShouldLog($this->isErrorTrackerEnabled());
+        $this->setEnableLogging($this->isErrorTrackerLoggingEnabled());
         parent::__construct();
         $this->level = "error";
         $this->breadcrub_recorder = new Recorder;
@@ -69,7 +71,7 @@ class BaseTrackerService extends BaseService
 
     protected function canPush()
     {
-        if (empty(config("devpilot.app_key")) || empty(config("devpilot.base_url"))) {
+        if (empty($this->getAuthenticationAppKey()) || empty($this->getGeneralBaseUrl())) {
             return $this->checkIfVerbose(
                 new ErrorTrackerException("Devpilot app keys or base url not configured properly."),
                 false
@@ -92,7 +94,7 @@ class BaseTrackerService extends BaseService
     protected function logResponse(string $message, array $data = []): void
     {
         if ($this->enable_error_tracker_logging) {
-            $this->logger($message, $data, config("devpilot.error_tracker_log_channel"));
+            $this->logger($message, $data, $this->getErrorTrackerLogChannel());
         }
     }
 
@@ -102,14 +104,14 @@ class BaseTrackerService extends BaseService
      *
      * @param string $name the name of the breadcrumb
      * @param string|null $type the type of breadcrumb
-     * @param array $meta_data extra data for the breadcrumb
+     * @param array $metadata extra data for the breadcrumb
      *
      * @return $this
      */
-    public function addBreadcrumb(string $name,string $type = null, array $meta_data = [])
+    public function addBreadcrumb(string $name,string $type = null, array $metadata = [])
     {
         $type = in_array($type, Breadcrumb::getTypes(), true) ? $type : Breadcrumb::MANUAL_TYPE;
-        $this->breadcrub_recorder->add(new Breadcrumb($name, $type, $meta_data));
+        $this->breadcrub_recorder->add(new Breadcrumb($name, $type, $metadata));
         return $this;
     }
 
@@ -185,41 +187,41 @@ class BaseTrackerService extends BaseService
     /**
      * Add an extra information for this error.
      *
-     * @param string $key The key of the meta_data
+     * @param string $key The key of the metadata
      *
-     * @param string|array $value The value of the meta_data
+     * @param string|array $value The value of the metadata
      *
      * @return void
      */
-    public function addMetaData(string $key,mixed $value)
+    public function addMetadata(string $key,mixed $value)
     {
-        $this->meta_data[$key] = $value;
+        $this->metadata[$key] = $value;
         return $this;
     }
 
     /**
      * Set the extra information for this error.
      *
-     * @param array $data The content of the meta_data
+     * @param array $data The content of the metadata
      *
      * @return $this
      */
-    public function setMetaData(array $data)
+    public function setMetadata(array $data)
     {
-        $this->meta_data = $data;
+        $this->metadata = $data;
         return $this;
     }
 
     /**
      * Remove an extra information for this error.
      *
-     * @param string $key The key of the meta_data
+     * @param string $key The key of the metadata
      *
      * @return void
      */
-    public function removeMetaData(string $key)
+    public function removeMetadata(string $key)
     {
-        unset($this->meta_data[$key]);
+        unset($this->metadata[$key]);
         return $this;
     }
 
@@ -228,9 +230,9 @@ class BaseTrackerService extends BaseService
      *
      * @return void
      */
-    public function clearMetaData()
+    public function clearMetadata()
     {
-        $this->meta_data = [];
+        $this->metadata = [];
         return $this;
     }
 
@@ -239,9 +241,9 @@ class BaseTrackerService extends BaseService
      *
      * @return array
      */
-    public function getMetaData()
+    public function getMetadata()
     {
-        return $this->meta_data;
+        return $this->filterMetadata($this->metadata);
     }
 
 

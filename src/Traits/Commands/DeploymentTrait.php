@@ -3,15 +3,14 @@
 namespace TechiesAfrica\Devpilot\Traits\Commands;
 
 use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableSeparator;
 use TechiesAfrica\Devpilot\Exceptions\Deployments\DeploymentException;
-use TechiesAfrica\Devpilot\Exceptions\General\ServerErrorException;
 use TechiesAfrica\Devpilot\Traits\Commands\Errors\ErrorHandlerTrait;
+use TechiesAfrica\Devpilot\Traits\General\ConfigurationTrait;
 
 trait DeploymentTrait
 {
-    use ErrorHandlerTrait;
+    use ErrorHandlerTrait , ConfigurationTrait;
 
     public function withOptions()
     {
@@ -181,8 +180,8 @@ trait DeploymentTrait
 
     public function deploy(): array
     {
-        if (!config("devpilot.enable_deployment", false)) {
-            throw new ServerErrorException("Deployment is disabled from your configurations.");
+        if (!$this->isDeploymentEnabled(false)) {
+            throw new DeploymentException("Deployment is disabled from your configurations.");
         }
 
         $process  = $this->service->deploy($this->options_array);
