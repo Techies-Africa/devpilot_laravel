@@ -122,7 +122,7 @@ class DevpilotServiceProvider extends ServiceProvider
             __DIR__ . '/../config/devpilot.php' => config_path('devpilot.php'),
         ], 'config');
         $this->publishes([
-            __DIR__ . '/../Middleware/ActivityTracker/TrackerMiddleware.php' => app_path("Http/Middleware/Devpilot/ActivityTracker/TrackerMiddleware.php"),
+            __DIR__ . '/../Http/Middleware/ActivityTracker/TrackerMiddleware.php' => app_path("Http/Middleware/Devpilot/ActivityTracker/TrackerMiddleware.php"),
         ], 'middleware');
         $this->publishes([
             __DIR__ . '/../Templates/.devpilot' => base_path(".devpilot"),

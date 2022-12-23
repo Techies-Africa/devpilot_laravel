@@ -18,32 +18,30 @@ class TrackerMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        $tracker = new ActivityTracker;
-
         // Ignore routes you don`t want to track
-        $tracker->setIgnoreRoutes([
+        ActivityTracker::setIgnoreRoutes([
             "web.read_file"
         ]);
 
         // Ignore middlewares you don`t want to track
-        $tracker->setIgnoreMiddlewares(["Barryvdh\Debugbar\Middleware\DebugbarEnabled"]);
+        ActivityTracker::setIgnoreMiddlewares(["Barryvdh\Debugbar\Middleware\DebugbarEnabled"]);
 
         // Set middlewares used to identify authenticated users
-        $tracker->setAuthenticatedMiddlewares(["auth" , "admin" , "verified"]);
+        ActivityTracker::setAuthenticatedMiddlewares(["auth" , "admin" , "verified"]);
 
         // Set values for authenticated user mapping based of columns in the users table
-        $tracker->setUserFields(["id" => "id", "name" => "full_name", "email" => "email"]);
+        ActivityTracker::setUserFields(["id" => "id", "name" => "full_name", "email" => "email"]);
 
         // Toggle logging as necessary, default is true unless otherwise stated in your config
-        $tracker->setShouldLog(false);
+        // ActivityTracker::setShouldLog(false);
 
-        $tracker->preRequest($request);
+        ActivityTracker::preRequest($request);
 
         $response =  $next($request);
 
         // ActivityTracker::log("pushing data");
 
-        $tracker->postRequest($request)->push();
+        ActivityTracker::postRequest($request)->push();
 
         return $response;
     }
