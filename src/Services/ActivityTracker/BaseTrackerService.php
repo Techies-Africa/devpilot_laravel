@@ -2,75 +2,47 @@
 
 namespace TechiesAfrica\Devpilot\Services\ActivityTracker;
 
+use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use TechiesAfrica\Devpilot\Exceptions\ActivityTracker\ActivityTrackerException;
 use TechiesAfrica\Devpilot\Services\BaseService;
 use Throwable;
 
 class BaseTrackerService extends BaseService
 {
-    protected Request $request;
+    protected bool $is_test = false;
     protected bool $can_log = true;
-    protected bool $should_log;
+    protected bool $should_log = true;
     protected bool $enable_activity_tracker_logging = false;
-    protected $server = [];
-    protected $headers = [];
     protected $route = [];
-    protected $extra_data;
     protected $request_time;
     protected $response_time;
-    protected $ip_address;
-    protected $user;
-    protected $user_fields = ["id" => "id", "name" => "name", "email" => "email"];
     protected $ignore_routes = [];
     protected $ignore_middlewares = ["Barryvdh\Debugbar\Middleware\DebugbarEnabled"];
     protected $authenticated_middlewares = ["auth", "admin", "verified"];
-    public $response_data;
+    protected $response_data = null;
+    protected $response_callback;
 
 
     public function __construct()
     {
-        $this->setShouldLog(config("devpilot.enable_activity_tracking", true));
-        $this->setEnableLogging(config("devpilot.enable_activity_tracker_logging", false));
+        $this->setShouldLog($this->isActivityTrackerEnabled());
+        $this->setEnableLogging($this->isActivityTrackerLoggingEnabled());
+        $this->setIgnoreRoutes($this->getActivityTrackerIgnoreRoutes() ?? []);
+        $this->setAuthenticatedMiddlewares($this->getActivityTrackerAuthenticatedMiddlewares() ?? []);
+        $this->setUserFields($this->getActivityTrackerUserFields() ?? []);
         parent::__construct();
     }
 
     public function preRequest(Request $request)
     {
         $this->request = $request;
-        $this->server = $request->server();
+        $this->server = $this->filterServerData($request->server());
         $this->headers = $request->headers->all();
         $this->request_time = now();
         $this->ip_address = $request->ip();
         return $this;
     }
-
-    public function mapUserData($user)
-    {
-        $fields = $this->user_fields;
-        if (count($fields) == 0) {
-            return null;
-        }
-
-        $data = [];
-        foreach ($fields as $key => $value) {
-            $data[$key] = $user->$value;
-        }
-        return $data;
-    }
-
-    public function setUserFields(array $data)
-    {
-        $this->user_fields = $data;
-        return $this;
-    }
-
-    public function setExtraData(array $data)
-    {
-        $this->extra_data = $data;
-        return $this;
-    }
-
 
     public function setIgnoreRoutes(array $data)
     {
@@ -103,6 +75,13 @@ class BaseTrackerService extends BaseService
     }
 
 
+    public function setResponseData(array $data = null)
+    {
+        $this->response_data = $data;
+        return $this;
+    }
+
+
     public function isAjax()
     {
         try {
@@ -117,14 +96,23 @@ class BaseTrackerService extends BaseService
 
     public function canPush()
     {
-        if (empty(config("devpilot.app_key")) || empty(config("devpilot.base_url"))) {
-            return false;
+        if (empty($this->getAuthenticationAppKey()) || empty($this->getGeneralBaseUrl())) {
+            return $this->checkIfVerbose(
+                new ActivityTrackerException("Devpilot app keys or base url not configured properly."),
+                false
+            );
         }
-        if (!$this->should_log || !$this->can_log) {
-            return false;
+        if ((!$this->should_log || !$this->can_log)) {
+            return $this->checkIfVerbose(
+                new ActivityTrackerException("Devpilot activity tracking disabled."),
+                false
+            );
         }
         if ($this->isAjax()) {
-            return false;
+            return $this->checkIfVerbose(
+                new ActivityTrackerException("Devpilot activity tracking skipped ajax request."),
+                false
+            );
         }
         return true;
     }
@@ -137,7 +125,19 @@ class BaseTrackerService extends BaseService
     public function logResponse(string $message, array $data = []): void
     {
         if ($this->enable_activity_tracker_logging) {
-            $this->logger($message , $data , config("devpilot.activity_tracker_log"));
+            $this->logger($message, $data, $this->getActivityTrackerLogChannel());
         }
     }
+
+    public function setResponseCallback(Closure $callback)
+    {
+        $this->response_callback = $callback;
+        return $this;
+    }
+
+    public function onResponse(): void
+    {
+        array_map($this->response_callback, [$this->response_data]);
+    }
 }
+

@@ -3,41 +3,96 @@
 return [
 
     // GENERAL CONFIGURATION
+    "general" => [
+        "base_url" => env("DEVPILOT_BASE_URL", null),
+        "hostname" => null
+    ],
 
-    "base_url" => env("DEVPILOT_BASE_URL", null),
-    // The user whose account to authorize with i.e , you the developer
-    "user_access_token" => env("DEVPILOT_USER_TOKEN", null),
-    "user_access_token_passphrase" => env("DEVPILOT_USER_TOKEN_PASSPHRASE", null),
+    // AUTHENTICATION CONFIGURATION
+    "authentication" => [
+        // The user whose account to authorize with i.e , you the developer
+        "user_access_token" => env("DEVPILOT_USER_TOKEN", null),
+        "user_access_token_passphrase" => env("DEVPILOT_USER_TOKEN_PASSPHRASE", null),
 
-    // Details of the app to connect with
-    "app_key" => env("DEVPILOT_APP_KEY", null),
-    "app_secret" => env("DEVPILOT_APP_SECRET", null),
+        // Details of the app to connect with
+        "app_key" => env("DEVPILOT_APP_KEY", null),
+        "app_secret" => env("DEVPILOT_APP_SECRET", null),
 
-
-
+    ],
 
 
     // DEPLOYMENT SPIECIFIC CONFIGURATIONS
-
-    "enable_deployment" => env("DEVPILOT_ENABLE_DEPLOYMENT", true),
-
-    // Default branch to deploy if not specified
-    "default_branch" => env("DEVPILOT_DEFAULT_BRANCH", null),
-
-    // Log deployment messages or errors
-    "enable_deployment_logging" => false,
-    "deployment_log" => env("DEVPILOT_LOG_CHANNEL", env('LOG_CHANNEL', 'stack')),
+    "deployment" => [
+        "enable" => env("DEVPILOT_ENABLE_DEPLOYMENT", true),
+        "default_branch" => env("DEVPILOT_DEFAULT_BRANCH", null),
+        "enable_logging" => false,
+        "log_channel" => env("DEVPILOT_LOG_CHANNEL", env("LOG_CHANNEL", "stack")),
+        "callback_url" => null
+    ],
 
 
+    // ACTIVITY TRACKER SPECIFIC CONFIGURATIONS
+    "activity_tracker" => [
+        "enable" => env("DEVPILOT_ENABLE_ACTIVITY_TRACKER", true),
+        "enable_logging" => false,
+        "log_channel" => env("DEVPILOT_LOG_CHANNEL", env("LOG_CHANNEL", "stack")),
+        "callback_url" => null,
 
+        // Ignore routes you don`t want to track
+        "ignore_routes" => [
+            // "web.read_file"
+        ],
 
+        // Ignore middlewares you don`t want to track
+        "ignore_middlewares" => [
+            //"Barryvdh\Debugbar\Middleware\DebugbarEnabled"
+        ],
 
-    // ACTIVITY TRACKER SPIECIFIC CONFIGURATIONS
+        "authenticated_middlewares" => [
+            "auth",
+            "admin",
+            "verified"
+        ],
 
-    "enable_activity_tracking" => env("DEVPILOT_ENABLE_ACTIVITY_TRACKING", true),
+        "user_fields" => [
+            "id" => "id",
+            "name" => "name",
+            "email" => "email"
+        ]
 
-    // Log activity tracking messages or errors
-    "enable_activity_tracker_logging" => false,
-    "activity_tracker_log" => env("DEVPILOT_LOG_CHANNEL", env('LOG_CHANNEL', 'stack')),
+    ],
 
+    // ERROR TRACKER SPIECIFIC CONFIGURATIONS
+    "error_tracker" => [
+        "enable" => env("DEVPILOT_ENABLE_ERROR_TRACKER", true),
+        "project_path" => base_path(),
+        "strip_path" => base_path(),
+        "enable_logging" => false,
+        "log_channel" => env("DEVPILOT_LOG_CHANNEL", env("LOG_CHANNEL", "stack")),
+        "callback_url" => null,
+        "ignored_classes" => [],
+        "send_code" => false,
+        "metadata_filters" => [
+            "access_token", // case-insensitive: "access_token", "ACCESS_TOKEN", "AcCeSs_ToKeN"
+            "/^cc_/",        // prefix match: "cc_number" "cc_cvv" "cc_expiry"
+            "password",
+            "cookie",
+            "token",
+            "secret",
+            "authorization",
+            "php-auth-user",
+            "php-auth-pw",
+            "php-auth-digest"
+        ]
+    ],
+
+    // COMMAND FILTERS
+    "command_filter" => [
+        "disabled" => env("DEVPILOT_DISABLED_COMMANDS", [
+            "key:generate",
+            "migrate:fresh",
+            "migrate:refresh",
+            "migrate:rollback",
+        ])
+    ],
 ];

@@ -7,12 +7,11 @@ use TechiesAfrica\Devpilot\Services\BaseService;
 
 class DeploymentService extends BaseService
 {
-
     protected bool $enable_deployment_logging = false;
 
     public function __construct()
     {
-        $this->setEnableLogging(config("devpilot.enable_deployment_logging", false));
+        $this->setEnableLogging($this->isDeploymentLoggingEnabled());
         parent::__construct();
     }
 
@@ -30,7 +29,7 @@ class DeploymentService extends BaseService
     public function logResponse(string $message, array $data = []): void
     {
         if ($this->enable_deployment_logging) {
-            $this->logger($message, $data, config("devpilot.deployment_log"));
+            $this->logger($message, $data, $this->getDeploymentLogChannel());
         }
     }
 
@@ -45,7 +44,11 @@ class DeploymentService extends BaseService
             "hooks" => $options["hooks"] ?? null,
             "commands" => $options["commands"] ?? null,
             "storage_paths" => $options["storage_paths"] ?? null,
+            "hostname" => $this->getHostname(),
+            "git_user" => self::tryOrNull("git config user.name"),
+            "git_email" => self::tryOrNull("git config user.email"),
         ];
+
         $process = $this->guzzle->post($url, $data);
         $this->guzzle->validateResponse($process);
         $this->logResponse($process["message"], $process["data"] ?? []);
@@ -63,5 +66,14 @@ class DeploymentService extends BaseService
         $process = $this->guzzle->post($url, $data);
         $this->guzzle->validateResponse($process);
         return $process;
+    }
+
+    private static function tryOrNull($command)
+    {
+        try {
+            return shell_exec($command);
+        } catch (\Throwable $th) {
+            return null;
+        }
     }
 }

@@ -4,12 +4,11 @@ namespace TechiesAfrica\Devpilot\Services\ActivityTracker;
 
 use Illuminate\Http\Request;
 use TechiesAfrica\Devpilot\Constants\UrlConstants;
-use TechiesAfrica\Devpilot\Services\General\Guzzle\GuzzleService;
+use TechiesAfrica\Devpilot\Exceptions\ActivityTracker\ActivityTrackerException;
 
-class TrackerService extends BaseTrackerService
+class ActivityTrackerService extends BaseTrackerService
 {
-
-    public static function tracker(): self
+    public static function init(): self
     {
         return app(self::class);
     }
@@ -19,15 +18,15 @@ class TrackerService extends BaseTrackerService
         $this->request = $request;
         $user = $request->user();
         $action = optional($request->route())->action;
-
         if (empty($action)) {
+            $this->checkIfVerbose(new ActivityTrackerException("No route action found."));
             $this->can_log = false;
             return $this;
         }
 
         $is_ignored = RouteCheckService::checkIfRouteIsIgnored($request->route(), $this->ignore_routes);
-
         if ($is_ignored) {
+            $this->checkIfVerbose(new ActivityTrackerException("No route action found."));
             $this->can_log = false;
             return $this;
         }
@@ -35,12 +34,14 @@ class TrackerService extends BaseTrackerService
         $is_ignored = RouteCheckService::checkIfMiddlewareIsIgnored($request->route(), $this->ignore_middlewares);
 
         if ($is_ignored) {
+            $this->checkIfVerbose(new ActivityTrackerException("No route action found."));
             $this->can_log = false;
             return $this;
         }
 
-        $this->user = empty($user) ? null : $this->mapUserData($user);
+        $this->user = empty($user) ? [] : $this->mapUserData($user);
         $this->route = [
+            "url" => $request->fullUrl(),
             "action" => $action,
             "method" => $request->getMethod(),
             "referrer" => $request->headers->get('referer'),
@@ -61,19 +62,23 @@ class TrackerService extends BaseTrackerService
             "app_secret" => $this->app_secret,
             "request_time" => $this->request_time,
             "response_time" => $this->response_time,
+            "callback_url" => $this->getActivityTrackerCallbackUrl(),
             "payload" => [
                 "ip_address" => $this->ip_address,
                 "server" => $this->server,
                 "middlewares" => implode(",", $this->request->route()->action["middleware"] ?? []),
                 "route" => $this->route,
                 "user" => $this->user,
-                "extra_data" => $this->extra_data
+                "metadata" => $this->metadata
             ],
-            "success_callback_url" => null,
-            "error_callback_url" => null,
         ];
     }
 
+    function isTest(bool $value = true)
+    {
+        $this->is_test = $value;
+        return $this;
+    }
 
     public function push()
     {
@@ -84,10 +89,17 @@ class TrackerService extends BaseTrackerService
         $url = UrlConstants::logActivity();
         $data = $this->build();
 
-        $process = $this->guzzle->post($url , $data);
+        if ($this->is_test) {
+            $data["is_test"] = 1;
+        }
+
+        $process = $this->guzzle->post($url, $data);
         $this->guzzle->validateResponse($process);
-        $this->logResponse($process["message"] , $process["data"] ?? []);
-        $this->response_data = $process;
+        $this->logResponse($process["message"], $process["data"] ?? []);
+        if (!empty($data = $process)) {
+            $this->setResponseData($data);
+        }
+        $this->onResponse();
         return $this;
     }
 }

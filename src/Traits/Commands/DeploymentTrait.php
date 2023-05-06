@@ -3,15 +3,14 @@
 namespace TechiesAfrica\Devpilot\Traits\Commands;
 
 use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableSeparator;
 use TechiesAfrica\Devpilot\Exceptions\Deployments\DeploymentException;
-use TechiesAfrica\Devpilot\Exceptions\General\ServerErrorException;
 use TechiesAfrica\Devpilot\Traits\Commands\Errors\ErrorHandlerTrait;
+use TechiesAfrica\Devpilot\Traits\General\ConfigurationTrait;
 
 trait DeploymentTrait
 {
-    use ErrorHandlerTrait;
+    use ErrorHandlerTrait , ConfigurationTrait;
 
     public function withOptions()
     {
@@ -145,7 +144,7 @@ trait DeploymentTrait
                 //    $deployment["commit_url"],
                 $deployment["started_at"],
                 $deployment["ended_at"],
-                $deployment["duration"],
+                $this->getDuration($deployment["duration"], 2, "s"),
             ]);
         }
 
@@ -164,9 +163,14 @@ trait DeploymentTrait
 
         $i = 1;
         foreach ($deployment as $key => $value) {
+
+            $key = ucwords(str_replace("_", " ", $key));
+            if ($key == "Duration") {
+                $value = $this->getDuration($value, 2, "s");
+            }
             $table->addRow([
                 $i,
-                ucwords(str_replace("_", " ", $key)),
+                $key,
                 $value
             ]);
             $i++;
@@ -176,8 +180,8 @@ trait DeploymentTrait
 
     public function deploy(): array
     {
-        if (!config("devpilot.enable_deployment", false)) {
-            throw new ServerErrorException("Deployment is disabled from your configurations.");
+        if (!$this->isDeploymentEnabled(false)) {
+            throw new DeploymentException("Deployment is disabled from your configurations.");
         }
 
         $process  = $this->service->deploy($this->options_array);
@@ -213,6 +217,7 @@ trait DeploymentTrait
         $hooks = $info["hooks"];
 
         $table = new Table($this->output);
+        $table->setHorizontal(false);
         $table->setHeaders([
             "#",
             "FIELD",
@@ -221,20 +226,29 @@ trait DeploymentTrait
 
         foreach ($hooks as $hook) {
             $i = 1;
-            $table->addRow([new TableCell('------- Hook Information Start --------', ['colspan' => 2])]);
-            $table->addRow(new TableSeparator(['colspan' => 2]));
+            $table->addRow(new TableSeparator(['colspan' => 3]));
             foreach ($hook as $key => $value) {
+                $key = ucwords(str_replace("_", " ", $key));
+                if (strlen($value) > 50) {
+                    $value = substr(trim($value), 0, 50) . "...";
+                }
+
+                if ($key == "Duration") {
+                    $value = $this->getDuration($value, 2, "s");
+                }
                 $table->addRow([
                     $i,
-                    ucwords(str_replace("_", " ", $key)),
+                    $key,
                     $value
                 ]);
                 $i++;
             }
-            $table->addRow(new TableSeparator(['colspan' => 2]));
-            $table->addRow([new TableCell('------- Hook Information End --------', ['colspan' => 2])]);
-            $table->addRow(new TableSeparator(['colspan' => 2]));
         }
         $table->render();
+    }
+
+    public function getDuration($ms, $decimal_places = 0, $suffix = null)
+    {
+        return number_format($ms / 1000, $decimal_places) . " " . $suffix;
     }
 }
